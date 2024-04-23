@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{74af2dd8-5245-487f-8104-51d3be052e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{240c3e53-fd09-489b-83f4-0d9326472daa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{ced37556-d1f2-4433-967f-74b8e09d16d9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Hazel\Core.h" />
+    <ClInclude Include="src\Hazel\Application.h" />
+    <ClInclude Include="src\Hazel.h" />
+    <ClInclude Include="src\Hazel\EntryPoint.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Hazel\Application.cpp" />
+  </ItemGroup>
+</Project>
