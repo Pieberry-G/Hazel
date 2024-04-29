@@ -1,6 +1,7 @@
 # Directoried
 .vs/
 bin/
+!/vendor/bin
 bin-int/
 
 # Files
