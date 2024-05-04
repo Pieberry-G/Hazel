@@ -52,7 +52,7 @@ namespace Hazel {
 	class MouseButtonEvent : public Event
 	{
 	public:
-		MouseCode GetMouseCode() { return m_Button; }
+		MouseCode GetMouseButton() { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton);
 	protected:
