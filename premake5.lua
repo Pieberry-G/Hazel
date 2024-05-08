@@ -26,8 +26,10 @@ group ""
 
 project "Hazel"
     location "Hazel"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
+    cppdialect "C++17"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -62,8 +64,6 @@ project "Hazel"
     pchheader "hzpch.h"
 
     filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "Off"
         systemversion "latest"
 
         defines
@@ -71,11 +71,6 @@ project "Hazel"
             "HZ_PLATFORM_WINDOWS",
             "HZ_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
-        }
-
-        postbuildcommands
-        {
-            ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
         }
 
     filter "configurations:Debug"
@@ -97,6 +92,8 @@ project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
+    cppdialect "C++17"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -115,8 +112,6 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "Off"
         systemversion "latest"
 
         defines
@@ -132,14 +127,14 @@ project "Sandbox"
     filter "configurations:Debug"
         defines { "HZ_DEBUG" }
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines { "HZ_NDEBUG" }
         runtime "Release"
-        optimize "On"
+        optimize "on"
     
         filter "configurations:Dist"
         defines { "HZ_DIST" }
         runtime "Release"
-        optimize "On"
+        optimize "on"
