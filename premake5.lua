@@ -69,7 +69,6 @@ project "Hazel"
         defines
         {
             "HZ_PLATFORM_WINDOWS",
-            "HZ_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
 
@@ -108,6 +107,7 @@ project "Sandbox"
     {
         "Hazel/vendor/spdlog/include",
         "Hazel/src",
+        "%{IncludeDir.Imgui}",
         "%{IncludeDir.glm}"
     }
 
