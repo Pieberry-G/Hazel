@@ -1,4 +1,4 @@
-#pragma once
+		#pragma once
 
 // For use by Hazel applications
 
@@ -11,6 +11,7 @@
 #include "Hazel/Input.h"
 #include "Hazel/KeyCodes.h"
 #include "Hazel/MouseButtonCodes.h"
+#include "Hazel/OrthographicCameraController.h"
 
 #include "Hazel/Imgui/ImGuiLayer.h"
 
