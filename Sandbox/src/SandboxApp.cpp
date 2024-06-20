@@ -13,7 +13,7 @@ class ExampleLayer : public Hazel::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_CameraController(1920.f / 1080.f, true)
+		: Layer("Example"), m_CameraController(1920.f / 1080.f)
 	{
 		m_VertexArray.reset(Hazel::VertexArray::Create());
 
