@@ -57,10 +57,37 @@
     <ClInclude Include="src\Hazel.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Application.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Core.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\EntryPoint.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Input.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\KeyCodes.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Layer.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\LayerStack.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Log.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Hazel\Core\MouseCodes.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Core\Timestep.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Window.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Events\ApplicationEvent.h">
@@ -85,6 +112,9 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\OrthographicCamera.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\OrthographicCameraController.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\RenderCommand.h">
@@ -1383,38 +1413,20 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Core\KeyCodes.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Core.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\EntryPoint.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Input.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Layer.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\LayerStack.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Log.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\OrthographicCameraController.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Window.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Core\Application.h">
-      <Filter>src\Hazel\Core</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Hazel\Core\Application.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\Layer.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\LayerStack.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\Log.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Hazel\Imgui\ImGuiBuild.cpp">
       <Filter>src\Hazel\Imgui</Filter>
     </ClCompile>
@@ -1425,6 +1437,9 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\RenderCommand.cpp">
@@ -1474,21 +1489,6 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Core\Layer.cpp">
-      <Filter>src\Hazel\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Core\LayerStack.cpp">
-      <Filter>src\Hazel\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Core\Log.cpp">
-      <Filter>src\Hazel\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Core\OrthographicCameraController.cpp">
-      <Filter>src\Hazel\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Core\Application.cpp">
-      <Filter>src\Hazel\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
