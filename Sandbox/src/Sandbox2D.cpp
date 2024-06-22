@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Sandbox2D::Sandbox2D()
-	: Layer("Sandbox2D"), m_CameraController(1920.f / 1080.f)
+	: Layer("Sandbox2D"), m_CameraController(1920.0f / 1080.0f)
 {
 }
 
@@ -24,7 +24,7 @@ void Sandbox2D::OnUpdate(float ts)
 	m_CameraController.OnUpdate(ts);
 
 	// Render
-	Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+	Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hazel::RenderCommand::Clear();
 
 	Hazel::Renderer2D::BeginScene(m_CameraController.GetCamera());
