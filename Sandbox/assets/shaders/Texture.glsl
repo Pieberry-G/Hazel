@@ -1,4 +1,4 @@
-//Basic Texture Shader
+// Basic Texture Shader
 
 #type vertex
 #version 330 core
@@ -23,8 +23,6 @@ void main()
 layout(location = 0) out vec4 color;
 
 in vec2 v_TexCoord;
-
-uniform vec3 u_Color;
 
 uniform sampler2D u_Texture;
 
