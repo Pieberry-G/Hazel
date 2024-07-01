@@ -34,7 +34,7 @@ namespace Hazel {
 
 		m_Camera.SetPosition(m_CameraPosition);
 		
-		m_CameraTranslationSpeed = m_ZoomLevel * 0.2;
+		m_CameraTranslationSpeed = m_ZoomLevel;
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)

@@ -36,7 +36,7 @@ namespace Hazel {
 		float m_CameraRotation = 0.0f;
 
 		float m_CameraTranslationSpeed = 1.0f;
-		float m_CameraRotationSpeed = 0.1f;
+		float m_CameraRotationSpeed = 180.0f;
 	};
 
 }

@@ -62,12 +62,12 @@ namespace Hazel {
 
 	void Application::Run()
 	{
-		float time = (float)glfwGetTime();
-		Timestep timestep = time - m_LastFrameTime;
-		m_LastFrameTime = time;
-
 		while (m_Running)
 		{
+			float time = (float)glfwGetTime();
+			Timestep timestep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+
 			if (!m_Minimized)
 			{
 				for (Layer* layer : m_LayerStack)
