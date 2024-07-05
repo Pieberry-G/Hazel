@@ -13,7 +13,7 @@ namespace Hazel {
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Hazel App");
+		Application(const std::string& name = "Hazelnut");
 		virtual ~Application();
 
 		void Run();
@@ -27,6 +27,8 @@ namespace Hazel {
 		Window& GetWindow() { return *m_Window; }
 
 		void Close();
+
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		static Application& Get() { return *s_Instance; }
 	private:

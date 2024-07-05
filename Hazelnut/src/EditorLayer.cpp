@@ -1,4 +1,4 @@
-#include "HazelnutLayer.h"
+#include "EditorLayer.h"
 #include "imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -45,12 +45,12 @@ namespace Hazel {
 #define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfileResults.push_back(profileResult); })
 
 
-	Hazelnut::Hazelnut()
-		: Layer("Hazelnut"), m_CameraController(1600.0f / 900.0f)
+	EditorLayer::EditorLayer()
+		: Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f)
 	{
 	}
 
-	void Hazelnut::OnAttach()
+	void EditorLayer::OnAttach()
 	{
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 		m_SpriteSheet = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
@@ -65,16 +65,17 @@ namespace Hazel {
 		m_FrameBuffer = FrameBuffer::Create(fbSpec);
 	}
 
-	void Hazelnut::OnDetach()
+	void EditorLayer::OnDetach()
 	{
 	}
 
-	void Hazelnut::OnUpdate(float ts)
+	void EditorLayer::OnUpdate(float ts)
 	{
 		PROFILE_SCOPE("Hazelnut::OnUpdate");
 
 		// Update
-		m_CameraController.OnUpdate(ts);
+		if(m_ViewportFocused)
+			m_CameraController.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -107,7 +108,7 @@ namespace Hazel {
 		m_FrameBuffer->Unbind();
 	}
 
-	void Hazelnut::OnImGuiRender()
+	void EditorLayer::OnImGuiRender()
 	{
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
@@ -185,24 +186,31 @@ namespace Hazel {
 
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
-		//for (auto& result : m_ProfileResults)
-		//{
-		//	char label[50];
-		//	strcpy(label, "%.3fms ");
-		//	strcat(label, result.Name);
-
-		//	ImGui::Text(label, result.Time);
-		//}
-		//m_ProfileResults.clear();
-
-		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2(256.0f, 256.0f), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::Begin("Viewport");
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
+		ImVec2 viewportPenelSize = ImGui::GetContentRegionAvail();
+		if (m_ViewportSize != *((glm::vec2*)&viewportPenelSize))
+		{
+			m_ViewportSize = { viewportPenelSize.x, viewportPenelSize.y };
+			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+			m_CameraController.OnResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::End();
+		ImGui::PopStyleVar();
 
 		ImGui::End();
 	}
 
-	void Hazelnut::OnEvent(Event& e)
+	void EditorLayer::OnEvent(Event& e)
 	{
 		m_CameraController.OnEvent(e);
 	}
