@@ -195,15 +195,15 @@ namespace Hazel {
 		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
 		ImVec2 viewportPenelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&viewportPenelSize))
+		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+		ImGui::Image((void*)textureID, ImVec2{ viewportPenelSize.x, viewportPenelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		if (m_ViewportSize != *((glm::vec2*)&viewportPenelSize) && viewportPenelSize.x >= 0 && viewportPenelSize.y >= 0)
 		{
 			m_ViewportSize = { viewportPenelSize.x, viewportPenelSize.y };
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
 			m_CameraController.OnResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
-		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();
 		ImGui::PopStyleVar();
 

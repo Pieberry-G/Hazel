@@ -18,6 +18,7 @@ IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["Imgui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
+IncludeDir["entt"] = "Hazel/vendor/entt/include"
 
 group "Dependencies"
     include "Hazel/vendor/GLFW"
@@ -53,7 +54,8 @@ project "Hazel"
         "%{IncludeDir.Glad}",
         "%{IncludeDir.Imgui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}"
     }
 
     links
@@ -116,6 +118,11 @@ project "Sandbox"
         "%{IncludeDir.Imgui}",
         "%{IncludeDir.glm}"
     }
+    
+    links
+    {
+        "Hazel"
+    }
 
     filter "system:windows"
         systemversion "latest"
@@ -124,11 +131,6 @@ project "Sandbox"
         {
             "HZ_PLATFORM_WINDOWS",
         }
-
-    links
-    {
-        "Hazel"
-    }
 
     filter "configurations:Debug"
         defines { "HZ_DEBUG" }
@@ -167,7 +169,13 @@ project "Hazelnut"
         "Hazel/vendor/spdlog/include",
         "Hazel/src",
         "%{IncludeDir.Imgui}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}"
+    }
+
+    links
+    {
+        "Hazel"
     }
 
     filter "system:windows"
@@ -177,11 +185,6 @@ project "Hazelnut"
         {
             "HZ_PLATFORM_WINDOWS",
         }
-
-    links
-    {
-        "Hazel"
-    }
 
     filter "configurations:Debug"
         defines { "HZ_DEBUG" }
