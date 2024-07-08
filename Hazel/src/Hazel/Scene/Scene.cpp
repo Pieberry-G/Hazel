@@ -4,6 +4,8 @@
 #include "Components.h"
 #include "Hazel/Renderer/Renderer2D.h"
 
+#include "Entity.h"
+
 namespace Hazel {
 
 	static void DoMath(const glm::mat4& transform)
@@ -48,9 +50,14 @@ namespace Hazel {
 
 	}
 
-	entt::entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& name)
 	{
-		return m_Registry.create();
+		Entity entity = { m_Registry.create(), this };
+		Entity entity2 = { m_Registry.create(), this };
+		entity.AddComponent<TransformComponent>(glm::mat4(1.0f));
+		auto& tag = entity.AddComponent<TagComponent>(name);
+		tag.Tag = name.empty() ? "Entity" : tag.Tag;
+		return entity;
 	}
 
 	void Scene::OnUpdate(Timestep ts)
