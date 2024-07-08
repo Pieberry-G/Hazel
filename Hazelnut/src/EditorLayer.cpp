@@ -8,43 +8,6 @@
 
 namespace Hazel {
 
-	template<typename Fn>
-	class Timer
-	{
-	public:
-		Timer(const char* name, Fn&& func)
-			: m_Name(name), m_Func(func), m_Stopped(false)
-		{
-			m_StartTimepoint = std::chrono::high_resolution_clock::now();
-		}
-
-		~Timer()
-		{
-			if (!m_Stopped)
-				Stop();
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::high_resolution_clock::now();
-			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-
-			m_Stopped = true;
-
-			float duration = (end - start) * 0.001f;
-			m_Func({ m_Name, duration });
-		}
-	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		bool m_Stopped;
-		Fn m_Func;
-	};
-
-#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfileResults.push_back(profileResult); })
-
-
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f)
 	{
@@ -52,17 +15,18 @@ namespace Hazel {
 
 	void EditorLayer::OnAttach()
 	{
-		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-		m_SpriteSheet = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-
-		m_TextureStairs = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
-
-		m_CameraController.SetZoomLevel(5.0f);
-
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1600;
 		fbSpec.Height = 900;
 		m_FrameBuffer = FrameBuffer::Create(fbSpec);
+
+		m_ActiveScene = CreateRef<Scene>();
+
+		auto square = m_ActiveScene->CreateEntity();
+		m_ActiveScene->Reg().emplace<TransformComponent>(square);
+		m_ActiveScene->Reg().emplace<SpriteRendererComponent>(square, glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+	
+		m_SquareEntity = square;
 	}
 
 	void EditorLayer::OnDetach()
@@ -71,8 +35,6 @@ namespace Hazel {
 
 	void EditorLayer::OnUpdate(float ts)
 	{
-		PROFILE_SCOPE("Hazelnut::OnUpdate");
-
 		// Update
 		if(m_ViewportFocused)
 			m_CameraController.OnUpdate(ts);
@@ -83,28 +45,13 @@ namespace Hazel {
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
-		static float rotation = 0.0f;
-		rotation += ts * 50.0f;
-
 		Renderer2D::BeginScene(m_CameraController.GetCamera());
-		Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(-45.0f), { 0.8f, 0.2f, 0.3f, 1.0f });
-		Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-		Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-		Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, 10.0f);
-		Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, glm::radians(rotation), m_CheckerboardTexture, 20.0f);
-		Renderer2D::DrawRotatedQuad({ 2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, glm::radians(rotation), m_TextureStairs);
+
+		// Update scene
+		m_ActiveScene->OnUpdate(ts);
+
 		Renderer2D::EndScene();
 
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
-		for (float y = -5.0; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.5f };
-				Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}
-		Renderer2D::EndScene();
 		m_FrameBuffer->Unbind();
 	}
 
@@ -184,7 +131,8 @@ namespace Hazel {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+		auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 
 		ImGui::End();
 
