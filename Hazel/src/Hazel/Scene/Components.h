@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Hazel/Scene/Camera.h"
+
 namespace Hazel {
 
 	struct TagComponent
@@ -37,11 +39,15 @@ namespace Hazel {
 			: Color(color) {}
 	};
 
-	struct MeshComponent
+	struct CameraComponent
 	{
-		bool data;
-		MeshComponent() = default;
-		MeshComponent(MeshComponent&) = default;
+		Camera Camera;
+		bool Primary = true;
+
+		CameraComponent() = default;
+		CameraComponent(CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Camera(projection) {}
 	};
 
 }
