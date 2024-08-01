@@ -2,6 +2,7 @@
 
 #include "Hazel/Core/Base.h"
 #include "Hazel/Scene/Scene.h"
+#include "Hazel/Scene/Entity.h"
 
 namespace Hazel {
 	
@@ -15,7 +16,10 @@ namespace Hazel {
 
 		void OnImGuiRender();
 	private:
+		void DrawEntityNode(Entity entity);
+	private:
 		Ref<Scene> m_Context;
+		Entity m_SelectionContext;
 	};
 
 }
