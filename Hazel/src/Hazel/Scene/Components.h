@@ -44,7 +44,7 @@ namespace Hazel {
 	{
 		SceneCamera Camera;
 		bool Primary = true;
-		bool FixedAspectRation = false;
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
