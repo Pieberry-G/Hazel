@@ -9,7 +9,7 @@
 namespace Hazel {
 
 	EditorLayer::EditorLayer()
-		: Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f)
+		: Layer("EditorLayer")
 	{
 	}
 
@@ -80,14 +80,9 @@ namespace Hazel {
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_CameraController.OnResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
-
-		// Update
-		if(m_ViewportFocused)
-			m_CameraController.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -200,7 +195,7 @@ namespace Hazel {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-		m_CameraController.OnEvent(e);
+
 	}
 
 }

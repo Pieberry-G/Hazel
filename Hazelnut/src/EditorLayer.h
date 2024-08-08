@@ -18,8 +18,6 @@ namespace Hazel {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 	private:
-		OrthographicCameraController m_CameraController;
-
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
