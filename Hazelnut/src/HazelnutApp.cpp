@@ -10,7 +10,6 @@ namespace Hazel {
 	public:
 		HazelnutApp()
 		{
-			//PushLayer(new ExampleLayer());
 			PushLayer(new EditorLayer());
 		}
 
