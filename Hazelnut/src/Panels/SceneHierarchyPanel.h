@@ -12,7 +12,7 @@ namespace Hazel {
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& scene);
 
-		void SetContex(Ref<Scene> context);
+		void SetContext(Ref<Scene> context);
 
 		void OnImGuiRender();
 	private:

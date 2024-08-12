@@ -11,10 +11,10 @@ namespace Hazel {
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
-		SetContex(context);
+		SetContext(context);
 	}
 
-	void SceneHierarchyPanel::SetContex(Ref<Scene> context)
+	void SceneHierarchyPanel::SetContext(Ref<Scene> context)
 	{
 		m_Context = context;
 	}
@@ -23,11 +23,11 @@ namespace Hazel {
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.view<TagComponent>().each([&](auto entityID, auto& tc)
+		for (auto entityID : m_Context->m_Registry.view<entt::entity>())
 		{
 			Entity entity{ entityID, m_Context.get() };
 			DrawEntityNode(entity);
-		});
+		}
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
