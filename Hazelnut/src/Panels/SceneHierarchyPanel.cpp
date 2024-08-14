@@ -1,7 +1,7 @@
 #include "SceneHierarchyPanel.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
+#include <imgui.h>
+#include <imgui_internal.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
