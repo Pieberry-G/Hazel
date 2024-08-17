@@ -19,6 +19,7 @@ namespace Hazel {
 	void EditorLayer::OnAttach()
 	{
 		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
 		fbSpec.Height = 900;
 		m_FrameBuffer = FrameBuffer::Create(fbSpec);
@@ -208,7 +209,7 @@ namespace Hazel {
 		ImVec2 viewportPenelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPenelSize.x, viewportPenelSize.y };
 
-		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(1);
 		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		
 		// Gizmos
