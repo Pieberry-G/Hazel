@@ -3,6 +3,8 @@
 #include "Hazel.h"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Hazel/Renderer/EditorCamera.h"
+
 namespace Hazel {
 
 	class EditorLayer : public Layer
@@ -29,6 +31,8 @@ namespace Hazel {
 		Ref<Scene> m_ActiveScene;
 		Entity m_CameraA;
 		Entity m_CameraB;
+
+		EditorCamera m_EditorCamera;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
