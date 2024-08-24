@@ -94,6 +94,7 @@ namespace Hazel {
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
+		// Update
 		m_EditorCamera.OnUpdate(ts);
 
 		// Render
@@ -101,6 +102,9 @@ namespace Hazel {
 		m_FrameBuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
+
+		// Clear our entity ID attachment to -1
+		m_FrameBuffer->ClearAttachment(1, -1);
 
 		// Update scene
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);

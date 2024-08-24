@@ -56,7 +56,6 @@ project "Hazel"
         {
             "_CRT_SECURE_NO_WARNINGS",
             "HZ_PLATFORM_WINDOWS",
-            "HZ_ENABLE_ASSERTS",
             "GLFW_INCLUDE_NONE",
             "YAML_CPP_STATIC_DEFINE"
         }
