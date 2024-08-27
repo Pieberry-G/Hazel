@@ -254,8 +254,8 @@ namespace Hazel {
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				OpenScene(path);
-				ImGui::EndDragDropTarget();
 			}
+			ImGui::EndDragDropTarget();
 		}
 
 		// Gizmos
