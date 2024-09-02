@@ -1,11 +1,11 @@
-# Directoried
-.vs/
-bin/
-!/vendor/bin
+# Binaries
+**/bin/
 bin-int/
+Intermediates/
 
-# Files
-*.user
-*.sln
-*.vcxproj
-*.filters
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
