@@ -9,8 +9,6 @@
 #include <imgui.h>
 #include <ImGuizmo.h>
 
-#include "hzpch.h"
-
 namespace Hazel {
 
 	EditorLayer::EditorLayer()
