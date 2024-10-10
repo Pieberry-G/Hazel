@@ -1,5 +1,4 @@
-#include "hzpch.h"
-#include "UUID.h"
+#include "Hazel/Core/UUID.h"
 
 #include <random>
 

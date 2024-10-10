@@ -1,11 +1,8 @@
-#include "hzpch.h"
-#include "Application.h"
+#include "Hazel/Core/Application.h"
 
-#include "TimeStep.h"
-
-#include "Hazel/Renderer/Renderer.h"
-
+#include "Hazel/Core/TimeStep.h"
 #include "Hazel/Core/Input.h"
+#include "Hazel/Renderer/Renderer.h"
 
 #include <glfw/glfw3.h>
 

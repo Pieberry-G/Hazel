@@ -1,11 +1,11 @@
-#include "SceneHierarchyPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
+
+#include "Hazel/Scene/Components.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
-
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Hazel/Scene/Components.h"
 
 namespace Hazel {
 
@@ -34,7 +34,7 @@ namespace Hazel {
 			m_SelectionContext = {};
 
 		// Right-click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		if (ImGui::BeginPopupContextWindow(0, 1))
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
 				m_Context->CreateEntity("Empty Entity");

@@ -18,8 +18,8 @@ namespace Hazel {
 
 	void EditorLayer::OnAttach()
 	{
-		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		m_IconPlay = Texture2D::Create("../../Hazelnut/Resources/Icons/PlayButton.png");
+		m_IconStop = Texture2D::Create("../../Hazelnut/Resources/Icons/StopButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -317,7 +317,7 @@ namespace Hazel {
 				tc.Scale = scale;
 			}
 		}
-		
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 
@@ -424,7 +424,6 @@ namespace Hazel {
 			case Key::R:
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
-
 		}
 		return true;
 	}

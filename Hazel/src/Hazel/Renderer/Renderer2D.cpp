@@ -1,9 +1,8 @@
-#include "hzpch.h"
-#include "Renderer2D.h"
+#include "Hazel/Renderer/Renderer2D.h"
 
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -154,9 +153,9 @@ namespace Hazel {
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		s_Data.QuadShader = Shader::Create("assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.CircleShader = Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
-		s_Data.LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
+		s_Data.QuadShader = Shader::Create("../../assets/shaders/Renderer2D_Quad.glsl");
+		s_Data.CircleShader = Shader::Create("../../assets/shaders/Renderer2D_Circle.glsl");
+		s_Data.LineShader = Shader::Create("../../assets/shaders/Renderer2D_Line.glsl");
 
 		int32_t samplers[s_Data.MaxTextureSlots];
 		for (uint32_t i = 0; i < 32; i++)

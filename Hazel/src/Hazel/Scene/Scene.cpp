@@ -1,9 +1,8 @@
-#include "hzpch.h"
-#include "Scene.h"
+#include "Hazel/Scene/Scene.h"
 
-#include "Components.h"
-#include "Entity.h"
-#include "ScriptableEntity.h"
+#include "Hazel/Scene/Components.h"
+#include "Hazel/Scene/Entity.h"
+#include "Hazel/Scene/ScriptableEntity.h"
 #include "Hazel/Renderer/Renderer2D.h"
 
 namespace Hazel {

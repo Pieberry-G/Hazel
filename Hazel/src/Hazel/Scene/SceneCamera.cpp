@@ -1,5 +1,4 @@
-#include "hzpch.h"
-#include "SceneCamera.h"
+#include "Hazel/Scene/SceneCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

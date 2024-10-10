@@ -1,5 +1,4 @@
-#include "hzpch.h"
-#include "SubTexture2D.h"
+#include "Hazel/Renderer/SubTexture2D.h"
 
 namespace Hazel {
 

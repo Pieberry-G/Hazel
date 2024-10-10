@@ -1,0 +1,18 @@
+[submodule "Hazel/deps/glfw"]
+	path = Hazel/deps/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "Hazel/deps/glm"]
+	path = Hazel/deps/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "Hazel/deps/spdlog"]
+	path = Hazel/deps/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "Hazel/deps/yaml-cpp"]
+	path = Hazel/deps/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "Hazel/deps/ImGuizmo/ImGuizmo"]
+	path = Hazel/deps/ImGuizmo/ImGuizmo
+	url = https://github.com/TheCherno/ImGuizmo.git
+[submodule "Hazel/deps/imgui/imgui"]
+	path = Hazel/deps/imgui/imgui
+	url = https://github.com/TheCherno/imgui.git

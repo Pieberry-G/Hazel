@@ -1,11 +1,9 @@
-#include "hzpch.h"
-#include "SceneSerializer.h"
+#include "Hazel/Scene/SceneSerializer.h"
 
-#include "Entity.h"
-#include "Components.h"
+#include "Hazel/Scene/Entity.h"
+#include "Hazel/Scene/Components.h"
 
 #include <fstream>
-
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {

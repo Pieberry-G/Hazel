@@ -1,18 +1,17 @@
-#include "hzpch.h"
-#include "ContentBrowserPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 #include <imgui.h>
 
 namespace Hazel {
 
 	// Once we have projects, change this
-	static const std::filesystem::path s_AssetPath = "assets";
+	static const std::filesystem::path s_AssetPath = "../../assets";
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(s_AssetPath), m_CurrentDirectory(m_BaseDirectory)
 	{
-		m_DirectoryIcon = Texture2D::Create("Resources/Icons/ContentBrowser/DirectoryIcon.png");
-		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
+		m_DirectoryIcon = Texture2D::Create("../../Hazelnut/Resources/Icons/ContentBrowser/DirectoryIcon.png");
+		m_FileIcon = Texture2D::Create("../../Hazelnut/Resources/Icons/ContentBrowser/FileIcon.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
@@ -46,7 +45,7 @@ namespace Hazel {
 			ImGui::PushID(filenameString.c_str());
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 
 			if (ImGui::BeginDragDropSource())
 			{

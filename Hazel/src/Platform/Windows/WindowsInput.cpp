@@ -1,8 +1,8 @@
-#include "hzpch.h"
-#include "Hazel/Core/Input.h"
+#include "Platform/Windows/WindowsWindow.h"
 
+#include "Hazel/Core/Input.h"
 #include "Hazel/Core/Application.h"
-#include "WindowsWindow.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Hazel {

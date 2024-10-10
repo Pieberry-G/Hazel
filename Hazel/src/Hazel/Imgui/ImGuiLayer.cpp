@@ -1,5 +1,4 @@
-#include "hzpch.h"
-#include "ImGuiLayer.h"
+#include "Hazel/Imgui/ImGuiLayer.h"
 
 #include "Hazel/Core/Application.h"
 
@@ -7,11 +6,10 @@
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
 
-// TEMPORARY
-#include <Glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
-#include <ImGuizmo.h>
+//#include <ImGuizmo.h>
 
 namespace Hazel {
 	ImGuiLayer::ImGuiLayer()
@@ -36,9 +34,6 @@ namespace Hazel {
 		//io.ConfigViewportsNoAutoMerge = true;
 		//io.ConfigViewportsNoTaskBarIcon = true;
 
-		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 24.0f);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 24.0f);
-
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsClassic();
@@ -53,10 +48,13 @@ namespace Hazel {
 
 		SetDarkThemeColors();
 
+		io.Fonts->AddFontFromFileTTF("../../assets/fonts/opensans/OpenSans-Bold.ttf", 24.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("../../assets/fonts/opensans/OpenSans-Regular.ttf", 24.0f);
+
 		Application& app = Application::Get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
-		// Setup Platform/Renderer bindings
+		// Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
@@ -83,7 +81,7 @@ namespace Hazel {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
+		//ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()
@@ -96,6 +94,9 @@ namespace Hazel {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		// Update and Render additional Platform Windows
+		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			GLFWwindow* backup_current_context = glfwGetCurrentContext();
