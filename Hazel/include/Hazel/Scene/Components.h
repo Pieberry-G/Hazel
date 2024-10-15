@@ -2,7 +2,7 @@
 
 #include "SceneCamera.h"
 #include "Hazel/Core/UUID.h"
-#include "Hazel/Renderer/Texture.h"
+#include "Hazel/Renderer/Material.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -63,14 +63,38 @@ namespace Hazel {
 			: Color(color) {}
 	};
 
-	struct CircleRendererComponent
+	struct SphereRendererComponent
 	{
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		float Thickness = 1.0f;
-		float Fade = 0.005f;
+		PbrMaterial Material;
+		PbrMaterialTexture MaterialTexture;
 
-		CircleRendererComponent() = default;
-		CircleRendererComponent(const CircleRendererComponent&) = default;
+		SphereRendererComponent() = default;
+		SphereRendererComponent(const SphereRendererComponent&) = default;
+		SphereRendererComponent(PbrMaterial& material)
+			: Material(material), MaterialTexture() {}
+		SphereRendererComponent(PbrMaterialTexture materialTexture)
+			: Material(), MaterialTexture(materialTexture) {}
+	};
+
+	struct PointLightComponent
+	{
+		glm::vec3 Color{ 300.0f, 300.0f, 300.0f};
+
+		PointLightComponent() = default;
+		PointLightComponent(const PointLightComponent&) = default;
+		PointLightComponent(const glm::vec3& color)
+			: Color(color) {}
+	};
+
+	struct DirectionalLightComponent
+	{
+		glm::vec3 Color{ 300.0f, 300.0f, 300.0f };
+		glm::vec3 Direction{ 0.0f, -1.0f, 0.0f };
+
+		DirectionalLightComponent() = default;
+		DirectionalLightComponent(const DirectionalLightComponent&) = default;
+		DirectionalLightComponent(const glm::vec3& color, const glm::vec3& direction)
+			: Color(color), Direction(direction) {}
 	};
 
 	struct CameraComponent

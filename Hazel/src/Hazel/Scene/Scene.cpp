@@ -1,9 +1,12 @@
 #include "Hazel/Scene/Scene.h"
 
+#include "Hazel/Core/ResourceManager.h"
 #include "Hazel/Scene/Components.h"
 #include "Hazel/Scene/Entity.h"
 #include "Hazel/Scene/ScriptableEntity.h"
 #include "Hazel/Renderer/Renderer2D.h"
+#include "Hazel/Renderer/Renderer3D.h"
+#include "Hazel/Renderer/RenderCommand.h"
 
 namespace Hazel {
 
@@ -63,7 +66,9 @@ namespace Hazel {
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SphereRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
@@ -116,7 +121,7 @@ namespace Hazel {
 			});
 		}
 
-		// Render 2D
+		// Render 3D
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -135,60 +140,67 @@ namespace Hazel {
 
 		if(mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
+			Renderer3D::BeginScene(*mainCamera, cameraTransform);
 
+			LightParams lightParams = GetLightParams();
+
+			// Draw sphere
+			{
+				auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
+					Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
+				}
+			}
+/*
 			// Draw sprites
 			{
 				auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 				for (auto entity : group)
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+					Renderer3D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
-
-			// Draw circle
-			{
-				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-				for (auto entity : view)
-				{
-					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-				}
-			}
-
-			Renderer2D::EndScene();
+*/
+			Renderer3D::EndScene();
 		}
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
+		Renderer3D::BeginScene(camera);
 
-		// Draw sprite
-		{
-			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-			}
-		}
+		LightParams lightParams = GetLightParams();
 
-		// Draw circle
+		// Draw sphere
 		{
-			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
 			for (auto entity : view)
 			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+				auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
+				Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
 			}
 		}
 
-		//Renderer2D::DrawLines(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1, 0, 1, 1));
-		//Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec3(2.0f), glm::vec4(1, 1, 1, 1));
+		Renderer3D::DrawGroundPlane(15, 15, 1.0f);
+/*
+		// Draw sprite
+		{
+			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer3D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+*/
+		//Renderer2D::BeginScene(camera);
+		//Renderer2D::DrawQuad(glm::vec3(0.0f), glm::vec3(1.0f), ResourceManager::Get()->Get2DTexture("IBL"));
+		//Renderer2D::EndScene();
 
-		Renderer2D::EndScene();
+		Renderer3D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -212,7 +224,9 @@ namespace Hazel {
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<SphereRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<PointLightComponent>(newEntity, entity);
+		CopyComponentIfExists<DirectionalLightComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 	}
@@ -227,6 +241,27 @@ namespace Hazel {
 				return Entity{ entity, this };
 		}
 		return {};
+	}
+
+	LightParams Scene::GetLightParams()
+	{
+		LightParams lightParams;
+
+		auto pointLightView = m_Registry.view<TransformComponent, PointLightComponent>();
+		for (auto entity : pointLightView)
+		{
+			auto [transform, pointLight] = pointLightView.get<TransformComponent, PointLightComponent>(entity);
+			lightParams.PointLightPositions.push_back(transform.Translation);
+			lightParams.PointLightColors.push_back(pointLight.Color);
+		}
+		auto directionalLightView = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		for (auto entity : directionalLightView)
+		{
+			auto [transform, directionalLight] = directionalLightView.get<TransformComponent, DirectionalLightComponent>(entity);
+			lightParams.DirectionalLightDirection = directionalLight.Direction;
+			lightParams.DirectionalLightColor = directionalLight.Color;
+		}
+		return lightParams;
 	}
 
 	template<typename T>
@@ -257,7 +292,17 @@ namespace Hazel {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	void Scene::OnComponentAdded<SphereRendererComponent>(Entity entity, SphereRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component)
 	{
 	}
 

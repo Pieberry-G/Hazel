@@ -27,6 +27,11 @@ namespace Hazel {
 			s_RendererAPI->Clear();
 		}
 
+		static void DrawArrays(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0)
+		{
+			s_RendererAPI->DrawArrays(vertexArray, vertexCount);
+		}
+
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0)
 		{
 			s_RendererAPI->DrawIndexed(vertexArray, indexCount);
@@ -41,6 +46,17 @@ namespace Hazel {
 		{
 			s_RendererAPI->SetLineWidth(width);
 		}
+
+		static void EnableDepthTest()
+		{
+			s_RendererAPI->EnableDepthTest();
+		}
+
+		static void DisableDepthTest()
+		{
+			s_RendererAPI->DisableDepthTest();
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

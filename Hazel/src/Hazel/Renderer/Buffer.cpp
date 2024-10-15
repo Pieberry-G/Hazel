@@ -17,7 +17,7 @@ namespace Hazel {
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> Hazel::VertexBuffer::Create(float* vertices, uint32_t size)
+	Ref<VertexBuffer> Hazel::VertexBuffer::Create(void* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{

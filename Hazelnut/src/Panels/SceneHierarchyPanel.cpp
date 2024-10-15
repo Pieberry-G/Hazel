@@ -34,7 +34,7 @@ namespace Hazel {
 			m_SelectionContext = {};
 
 		// Right-click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1))
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
 				m_Context->CreateEntity("Empty Entity");
@@ -91,7 +91,7 @@ namespace Hazel {
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 120.0f)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
@@ -152,9 +152,29 @@ namespace Hazel {
 		ImGui::SameLine();
 
 		ImGui::PopStyleVar();
-
 		ImGui::Columns(1);
 
+		ImGui::PopID();
+	}
+
+	template<typename Function>
+	static void DrawControl(const std::string& label, Function function)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 200.0f);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - ImGui::GetStyle().ItemSpacing.x);
+		function();
+		ImGui::PopItemWidth();
+
+		ImGui::Columns(1);
 		ImGui::PopID();
 	}
 
@@ -241,11 +261,29 @@ namespace Hazel {
 				}
 			}
 
-			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
+			if (!m_SelectionContext.HasComponent<SphereRendererComponent>())
 			{
-				if (ImGui::MenuItem("Circle Renderer"))
+				if (ImGui::MenuItem("Sphere Renderer"))
 				{
-					m_SelectionContext.AddComponent<CircleRendererComponent>();
+					m_SelectionContext.AddComponent<SphereRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (!m_SelectionContext.HasComponent<PointLightComponent>())
+			{
+				if (ImGui::MenuItem("Point Light"))
+				{
+					m_SelectionContext.AddComponent<PointLightComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (!m_SelectionContext.HasComponent<DirectionalLightComponent>())
+			{
+				if (ImGui::MenuItem("Directional Light"))
+				{
+					m_SelectionContext.AddComponent<DirectionalLightComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -268,57 +306,73 @@ namespace Hazel {
 		{
 			auto& camera = component.Camera;
 
-			ImGui::Checkbox("Primary", &component.Primary);
-			ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+			DrawControl("Primary", [&]() { ImGui::Checkbox("", &component.Primary); });
+			DrawControl("Fixed Aspect Ratio", [&]() { ImGui::Checkbox("", &component.FixedAspectRatio); });
 
 			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
-			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-			{
-				for (int i = 0; i < 2; i++)
+
+			DrawControl("Projection", [&]() {
+				if (ImGui::BeginCombo("", currentProjectionTypeString))
 				{
-					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+					for (int i = 0; i < 2; i++)
 					{
-						currentProjectionTypeString = projectionTypeStrings[i];
-						camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+						{
+							currentProjectionTypeString = projectionTypeStrings[i];
+							camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
 
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
+			});
 
-				ImGui::EndCombo();
-			}
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
 				float verticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (ImGui::DragFloat("Vertical FOV", &verticalFOV))
-					camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV));
+				DrawControl("Vertical FOV", [&]() {
+					if (ImGui::DragFloat("", &verticalFOV))
+						camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV));
+				});
 
 				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (ImGui::DragFloat("Near", &perspectiveNear))
-					camera.SetPerspectiveNearClip(perspectiveNear);
+				DrawControl("Near", [&]() {
+					if (ImGui::DragFloat("", &perspectiveNear))
+						camera.SetPerspectiveNearClip(perspectiveNear);
+				});
 
 				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far", &perspectiveFar))
-					camera.SetPerspectiveFarClip(perspectiveFar);
+				DrawControl("Far", [&]() {
+					if (ImGui::DragFloat("", &perspectiveFar))
+						camera.SetPerspectiveFarClip(perspectiveFar);
+				});
 			}
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
 				float orthoSize = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Size", &orthoSize))
+				DrawControl("Size", [&]() {
+				if (ImGui::DragFloat("", &orthoSize))
 					camera.SetOrthographicSize(orthoSize);
+				});
 
 				float orthoNear = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near", &orthoNear))
-					camera.SetOrthographicNearClip(orthoNear);
+				DrawControl("Near", [&]() {
+					if (ImGui::DragFloat("", &orthoNear))
+						camera.SetOrthographicNearClip(orthoNear);
+				});
 
 				float orthoFar = camera.GetOrthographicFarClip();
-				if (ImGui::DragFloat("Far", &orthoFar))
-					camera.SetOrthographicFarClip(orthoFar);
+				DrawControl("Far", [&]() {
+					if (ImGui::DragFloat("", &orthoFar))
+						camera.SetOrthographicFarClip(orthoFar);
+				});
 			}
 		});
 
@@ -345,11 +399,23 @@ namespace Hazel {
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+		DrawComponent<SphereRendererComponent>("Sphere Renderer", entity, [](auto& component)
 		{
-			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-			ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
-			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+			DrawControl("Albedo", [&](){ ImGui::ColorEdit3("", glm::value_ptr(component.Material.Albedo)); });
+			DrawControl("Metallic", [&](){ ImGui::DragFloat("", &component.Material.Metallic, 0.005f, 0.0f, 1.0f, "%.2f"); });
+			DrawControl("Roughness", [&](){ ImGui::DragFloat("", &component.Material.Roughness, 0.005f, 0.0f, 1.0f, "%.2f"); });
+			DrawControl("Ao", [&](){ ImGui::DragFloat("", &component.Material.Ao, 0.005f, 0.0f, 1.0f, "%.2f"); });
+		});
+
+		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component)
+		{
+			DrawControl("Color", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Color), 1.0f, 0.0f, 0.0f, "%.2f"); });
+		});
+
+		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
+		{
+			DrawControl("Direction", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Direction), 1.0f, 0.0f, 0.0f, "%.2f"); });
+			DrawControl("Color", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Color), 1.0f, 0.0f, 0.0f, "%.2f"); });
 		});
 	}
 }

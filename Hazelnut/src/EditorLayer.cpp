@@ -23,8 +23,8 @@ namespace Hazel {
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1600;
-		fbSpec.Height = 900;
+		fbSpec.Width = 1920;
+		fbSpec.Height = 1080;
 		m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
 		m_EditorScene = CreateRef<Scene>();
