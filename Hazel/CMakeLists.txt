@@ -14,4 +14,5 @@ target_compile_definitions(Hazel PRIVATE "$<$<CONFIG:DEBUG>:HZ_DEBUG>")
 target_compile_definitions(Hazel PRIVATE "$<$<CONFIG:RELEASE>:HZ_NDEBUG>")
 
 target_link_libraries(Hazel glad glfw glm imgui ImGuizmo spdlog stb_image  yaml-cpp)
+target_link_libraries(Hazel MaterialXCore MaterialXFormat MaterialXGenGlsl MaterialXGenShader MaterialXRender MaterialXRenderGlsl MaterialXRenderHw)
 target_include_directories(Hazel PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/deps/entt/include")

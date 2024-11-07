@@ -16,3 +16,6 @@
 [submodule "Hazel/deps/imgui/imgui"]
 	path = Hazel/deps/imgui/imgui
 	url = https://github.com/TheCherno/imgui.git
+[submodule "Hazel/deps/MaterialX"]
+	path = Hazel/deps/MaterialX
+	url = https://github.com/AcademySoftwareFoundation/MaterialX.git
