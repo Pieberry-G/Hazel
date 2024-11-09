@@ -2,6 +2,7 @@
 
 #include "Hazel/Renderer/Renderer2D.h"
 #include "Hazel/Renderer/Renderer3D.h"
+#include "test/RendererMX.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Hazel {
@@ -13,6 +14,7 @@ namespace Hazel {
 		RenderCommand::Init();
 		//Renderer2D::Init();
 		Renderer3D::Init();
+		RendererMX::Init();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

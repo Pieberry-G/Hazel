@@ -33,34 +33,34 @@ namespace Hazel {
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		// Entity
-		PbrMaterial material(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.1f, 1.0f);
-		Entity purpleSphere = m_ActiveScene->CreateEntity("Glass Sphere");
-		purpleSphere.AddComponent<SphereRendererComponent>(material);
-		purpleSphere.GetComponent<TransformComponent>().Translation = { -1.5f, 1.0f, 0.0f };
+		//// Entity
+		//PbrMaterial material(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.1f, 1.0f);
+		//Entity purpleSphere = m_ActiveScene->CreateEntity("Glass Sphere");
+		//purpleSphere.AddComponent<SphereRendererComponent>(material);
+		//purpleSphere.GetComponent<TransformComponent>().Translation = { -1.5f, 1.0f, 0.0f };
 
-		Entity glassSphere = m_ActiveScene->CreateEntity("Plastic Sphere");
-		glassSphere.AddComponent<SphereRendererComponent>(ResourceManager::Get()->GetPbrTexture("plastic"));
-		glassSphere.GetComponent<TransformComponent>().Translation = { 1.5f, 1.0f, 0.0f };
+		//Entity glassSphere = m_ActiveScene->CreateEntity("Plastic Sphere");
+		//glassSphere.AddComponent<SphereRendererComponent>(ResourceManager::Get()->GetPbrTexture("plastic"));
+		//glassSphere.GetComponent<TransformComponent>().Translation = { 1.5f, 1.0f, 0.0f };
 
-		Entity pointLight1 = m_ActiveScene->CreateEntity("Point Light");
-		pointLight1.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		pointLight1.GetComponent<TransformComponent>().Translation = { 5.0f, 5.0f, -5.0f };
+		//Entity pointLight1 = m_ActiveScene->CreateEntity("Point Light");
+		//pointLight1.AddComponent<PointLightComponent>(glm::vec3(300.0f));
+		//pointLight1.GetComponent<TransformComponent>().Translation = { 5.0f, 5.0f, -5.0f };
 
-		Entity pointLight2 = m_ActiveScene->CreateEntity("Point Light");
-		pointLight2.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		pointLight2.GetComponent<TransformComponent>().Translation = { -5.0f, 5.0f, -5.0f };
+		//Entity pointLight2 = m_ActiveScene->CreateEntity("Point Light");
+		//pointLight2.AddComponent<PointLightComponent>(glm::vec3(300.0f));
+		//pointLight2.GetComponent<TransformComponent>().Translation = { -5.0f, 5.0f, -5.0f };
 
-		Entity pointLight3 = m_ActiveScene->CreateEntity("Point Light");
-		pointLight3.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		pointLight3.GetComponent<TransformComponent>().Translation = { -5.0f, -5.0f, -5.0f };
+		//Entity pointLight3 = m_ActiveScene->CreateEntity("Point Light");
+		//pointLight3.AddComponent<PointLightComponent>(glm::vec3(300.0f));
+		//pointLight3.GetComponent<TransformComponent>().Translation = { -5.0f, -5.0f, -5.0f };
 
-		Entity pointLight4 = m_ActiveScene->CreateEntity("Point Light");
-		pointLight4.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		pointLight4.GetComponent<TransformComponent>().Translation = { 5.0f, -5.0f, -5.0f };
+		//Entity pointLight4 = m_ActiveScene->CreateEntity("Point Light");
+		//pointLight4.AddComponent<PointLightComponent>(glm::vec3(300.0f));
+		//pointLight4.GetComponent<TransformComponent>().Translation = { 5.0f, -5.0f, -5.0f };
 
-		Entity camera = m_ActiveScene->CreateEntity("Camera");
-		camera.AddComponent<CameraComponent>();
+		//Entity camera = m_ActiveScene->CreateEntity("Camera");
+		//camera.AddComponent<CameraComponent>();
 
 #if 0
 		// Entity
@@ -124,6 +124,9 @@ namespace Hazel {
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+			RendererMX::s_Data->m_fbsize[0] = (int)m_ViewportSize.x;
+			RendererMX::s_Data->m_fbsize[1] = (int)m_ViewportSize.y;
 		}
 
 		// Render
@@ -164,6 +167,7 @@ namespace Hazel {
 		{
 			int pixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+			m_HoveredEntity = Entity();
 		}
 
 		m_FrameBuffer->Unbind();

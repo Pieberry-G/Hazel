@@ -1,5 +1,5 @@
 #include <Hazel.h>
-//#include <Hazel/Core/EntryPoint.h>
+#include <Hazel/Core/EntryPoint.h>
 
 #include "EditorLayer.h"
 #include "EditorLayer3D.h"

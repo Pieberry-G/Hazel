@@ -6,6 +6,7 @@
 #include "Hazel/Scene/ScriptableEntity.h"
 #include "Hazel/Renderer/Renderer2D.h"
 #include "Hazel/Renderer/Renderer3D.h"
+#include "test/RendererMX.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
 namespace Hazel {
@@ -170,21 +171,23 @@ namespace Hazel {
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer3D::BeginScene(camera);
+		RendererMX::draw_contents();
 
-		LightParams lightParams = GetLightParams();
+		//Renderer3D::BeginScene(camera);
 
-		// Draw sphere
-		{
-			auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
-				Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
-			}
-		}
+		//LightParams lightParams = GetLightParams();
 
-		Renderer3D::DrawGroundPlane(15, 15, 1.0f);
+		//// Draw sphere
+		//{
+		//	auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
+		//	for (auto entity : view)
+		//	{
+		//		auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
+		//		Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
+		//	}
+		//}
+
+		//Renderer3D::DrawGroundPlane(15, 15, 1.0f);
 /*
 		// Draw sprite
 		{
@@ -200,7 +203,7 @@ namespace Hazel {
 		//Renderer2D::DrawQuad(glm::vec3(0.0f), glm::vec3(1.0f), ResourceManager::Get()->Get2DTexture("IBL"));
 		//Renderer2D::EndScene();
 
-		Renderer3D::EndScene();
+		//Renderer3D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
