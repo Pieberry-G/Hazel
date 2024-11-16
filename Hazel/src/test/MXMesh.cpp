@@ -83,7 +83,7 @@ namespace Hazel {
 
 
     MXMesh::MXMesh() :
-        _materialFilename("resources/Materials/Examples/StandardSurface/standard_surface_default.mtlx"),
+        _materialFilename("resources/Materials/Examples/StandardSurface/standard_surface_carpaint.mtlx"),
         _meshFilename("resources/Geometry/shaderball.glb"),
         _meshScale(1.0f),
         _selectedGeom(0),

@@ -141,7 +141,7 @@ namespace Hazel {
     {
         auto& genContext = RendererMX::s_Data->_genContext;
         auto& imageHandler = RendererMX::s_Data->_imageHandler;
-        auto& shadowCamera = RendererMX::s_Data->_camera->getShadowCamera();
+        auto& shadowCamera = RendererMX::s_Data->_camera->GetShadowCamera();
         auto& stdLib = RendererMX::s_Data->_stdLib;
         auto& geometryHandler = RendererMX::s_Data->_mesh->getGeometryHandler();
 
@@ -239,9 +239,9 @@ namespace Hazel {
         auto& genContext = RendererMX::s_Data->_genContext;
         auto& lightHandler = RendererMX::s_Data->_light->getLightHandler();
         auto& imageHandler = RendererMX::s_Data->_imageHandler;
-        auto& viewCamera = RendererMX::s_Data->_camera->getViewCamera();
-        auto& envCamera = RendererMX::s_Data->_camera->getEnvCamera();
-        auto& shadowCamera = RendererMX::s_Data->_camera->getShadowCamera();
+        auto& viewCamera = RendererMX::s_Data->_camera->GetViewCamera();
+        auto& envCamera = RendererMX::s_Data->_camera->GetEnvCamera();
+        auto& shadowCamera = RendererMX::s_Data->_camera->GetShadowCamera();
         float lightRotation = RendererMX::s_Data->_light->getLightRotation();
         auto& searchPath = RendererMX::s_Data->_searchPath;
         auto& geometryHandler = RendererMX::s_Data->_mesh->getGeometryHandler();

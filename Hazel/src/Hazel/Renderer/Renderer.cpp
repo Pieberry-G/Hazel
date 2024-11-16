@@ -1,6 +1,5 @@
 #include "Hazel/Renderer/Renderer.h"
 
-#include "Hazel/Renderer/Renderer2D.h"
 #include "test/RendererMX.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -11,7 +10,6 @@ namespace Hazel {
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
-		//Renderer2D::Init();
 		RendererMX::Init();
 	}
 

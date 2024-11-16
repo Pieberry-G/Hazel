@@ -4,7 +4,6 @@
 #include "Hazel/Scene/Components.h"
 #include "Hazel/Scene/Entity.h"
 #include "Hazel/Scene/ScriptableEntity.h"
-#include "Hazel/Renderer/Renderer2D.h"
 #include "test/RendererMX.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
@@ -143,7 +142,10 @@ namespace Hazel {
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
+		RendererMX::BeginScene(camera);
 		RendererMX::draw_contents();
+		RendererMX::DrawGroundPlane(20, 20, 1.0f);
+		RendererMX::EndScene();
 
 		//Renderer3D::BeginScene(camera);
 

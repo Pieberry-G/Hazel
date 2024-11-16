@@ -9,6 +9,7 @@
 #include "Hazel/Renderer/Shader.h"
 #include "Hazel/Renderer/VertexArray.h"
 #include "Hazel/Renderer/FrameBuffer.h"
+#include "Hazel/Renderer/EditorCamera.h"
 
 #include <MaterialXRender/ShaderMaterial.h>
 #include <MaterialXRender/ImageHandler.h>
@@ -21,18 +22,27 @@ namespace mx = MaterialX;
 
 namespace Hazel {
 
+	struct QuadVertex
+	{
+		glm::vec3 Position;
+		glm::vec2 TexCoord;
+	};
+
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+
+		// Editor-only
+		int EntityID;
+	};
+
 	class DocumentModifiers
 	{
 	public:
 		mx::StringMap remapElements;
 		mx::StringSet skipElements;
 		std::string filePrefixTerminator;
-	};
-
-	struct QuadVertex
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
 	};
 
 	struct RendererMXData
@@ -60,10 +70,10 @@ namespace Hazel {
 			_genContext.getOptions().hwShadowMap = true;
 			_genContext.getOptions().hwImplicitBitangents = false;
 
-			_renderPipeline = GLRenderPipeline::create();
-			_mesh = MXMesh::create();
-			_light = MXLight::create();
-			_camera = MXCamera::create();
+			_renderPipeline = CreateRef<GLRenderPipeline>();
+			_mesh = CreateRef<MXMesh>();
+			_light = CreateRef<MXLight>();
+			_camera = CreateRef<MXCamera>();
 		}
 
 		MXMeshPtr _mesh;
@@ -118,14 +128,29 @@ namespace Hazel {
 
 		Ref<VertexArray> GammaVertexArray;
 		Ref<Shader> GammaShader;
+
+		// Line
+		Ref<Shader> LineShader;
+		Ref<VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
+		uint32_t LineVertexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
+		float LineWidth = 2.0f;
 	};
 
 	class RendererMX
 	{
 	public:
 		static void Init();
-		static void mainloop();
+		
+		static void BeginScene(const EditorCamera& camera);
+		static void EndScene();
+
 		static void draw_contents();
+		static void DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID = -1);
+		static void DrawGroundPlane(int rows, int cols, float spacing = 1.0f);
+
 		static void renderScreenSpaceQuad(mx::MaterialPtr material);
 		
 		static void initContext(mx::GenContext& context);

@@ -54,12 +54,12 @@ namespace Hazel {
 
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 m_FocalPoint = { 0.0f, 3.0f, 0.0f };
+		glm::vec3 m_FocalPoint = { 0.0f, 1.0f, 0.0f };
 
 		glm::vec2 m_InitialMousePosition = { 0.0f, 0.0f };
 
-		float m_Distance = 25.0f;
-		float m_Pitch = glm::radians(5.0f), m_Yaw = glm::radians(-145.0f);
+		float m_Distance = 10.0f;
+		float m_Pitch = glm::radians(15.0f), m_Yaw = glm::radians(0.0f);
 
 		float m_ViewportWidth = 1920, m_ViewportHeight = 1080;
 	};

@@ -26,7 +26,6 @@ namespace Hazel {
         _cameraNearDist(0.05f),
         _cameraFarDist(5000.0f),
         _cameraZoom(DEFAULT_CAMERA_ZOOM),
-        _userCameraEnabled(true),
         _userTranslationActive(false),
         _viewCamera(mx::Camera::create()),
         _envCamera(mx::Camera::create()),
@@ -34,71 +33,21 @@ namespace Hazel {
     {
     }
 
-    void MXCamera::initCamera()
+    void MXCamera::UpdateCameras(MXMeshPtr mesh, MXLightPtr light)
     {
-        _viewCamera->setViewportSize(mx::Vector2((float)RendererMX::s_Data->m_fbsize[0], (float)RendererMX::s_Data->m_fbsize[1]));
+        //const mx::Vector3 translation = RendererMX::s_Data->_mesh->getMeshTranslation();
+        //const mx::Vector3 rotation = RendererMX::s_Data->_mesh->getMeshRotation();
+        //const mx::Vector3 scale = RendererMX::s_Data->_mesh->getMeshScale();
 
-        // Disable user camera controls when non-centered views are requested.
-        _userCameraEnabled = _cameraTarget == mx::Vector3(0.0) &&
-            RendererMX::s_Data->_mesh->getMeshScale() == 1.0f;
+        const mx::Vector3 translation = { 0, 0, 0 };
+        const mx::Vector3 rotation = { 0, 0, 0 };
+        const mx::Vector3 scale = { 1, 1, 1 };
 
-        if (!_userCameraEnabled || RendererMX::s_Data->_mesh->getGeometryHandler()->getMeshes().empty())
-        {
-            return;
-        }
-
-        const mx::Vector3& boxMax = RendererMX::s_Data->_mesh->getGeometryHandler()->getMaximumBounds();
-        const mx::Vector3& boxMin = RendererMX::s_Data->_mesh->getGeometryHandler()->getMinimumBounds();
-        mx::Vector3 sphereCenter = (boxMax + boxMin) * 0.5;
-
-        const mx::Vector3 rotation = RendererMX::s_Data->_mesh->getMeshRotation();
-        float yRotation = rotation[1];
         mx::Matrix44 meshRotation = mx::Matrix44::createRotationZ(rotation[2] / 180.0f * PI) *
-            mx::Matrix44::createRotationY(yRotation / 180.0f * PI) *
-            mx::Matrix44::createRotationX(rotation[0] / 180.0f * PI);
-        RendererMX::s_Data->_mesh->setMeshTranslation(-meshRotation.transformPoint(sphereCenter));
-        RendererMX::s_Data->_mesh->setMeshScale(IDEAL_MESH_SPHERE_RADIUS / (sphereCenter - boxMin).getMagnitude());
-    }
-
-    void MXCamera::updateCameras(MXMeshPtr mesh, MXLightPtr light)
-    {
-        auto& createPerspectiveMatrix = mx::Camera::createPerspectiveMatrix;
-        auto& createOrthographicMatrix = mx::Camera::createOrthographicMatrix;
-        mx::Matrix44 viewMatrix, projectionMatrix;
-        float aspectRatio = (float)RendererMX::s_Data->m_fbsize[0] / (float)RendererMX::s_Data->m_fbsize[1];
-        if (_cameraViewAngle != 0.0f)
-        {
-            viewMatrix = mx::Camera::createViewMatrix(_cameraPosition, _cameraTarget, _cameraUp);
-            float fH = std::tan(_cameraViewAngle / 360.0f * PI) * _cameraNearDist;
-            float fW = fH * aspectRatio;
-            projectionMatrix = createPerspectiveMatrix(-fW, fW, -fH, fH, _cameraNearDist, _cameraFarDist);
-        }
-        else
-        {
-            viewMatrix = mx::Matrix44::createTranslation(mx::Vector3(0.0f, 0.0f, -ORTHO_VIEW_DISTANCE));
-            float fH = ORTHO_PROJECTION_HEIGHT;
-            float fW = fH * aspectRatio;
-            projectionMatrix = createOrthographicMatrix(-fW, fW, -fH, fH, 0.0f, ORTHO_VIEW_DISTANCE + _cameraFarDist);
-        }
-        const mx::Vector3 translation = RendererMX::s_Data->_mesh->getMeshTranslation();
-        const mx::Vector3 rotation = RendererMX::s_Data->_mesh->getMeshRotation();
-        float scale = RendererMX::s_Data->_mesh->getMeshScale();
-        float yRotation = rotation[1];
-        mx::Matrix44 meshRotation = mx::Matrix44::createRotationZ(rotation[2] / 180.0f * PI) *
-            mx::Matrix44::createRotationY(yRotation / 180.0f * PI) *
+            mx::Matrix44::createRotationY(rotation[1] / 180.0f * PI) *
             mx::Matrix44::createRotationX(rotation[0] / 180.0f * PI);
 
-        mx::Matrix44 arcball = mx::Matrix44::IDENTITY;
-        if (_userCameraEnabled)
-        {
-            arcball = _viewCamera->arcballMatrix();
-        }
-
-        _viewCamera->setWorldMatrix(meshRotation *
-            mx::Matrix44::createTranslation(translation + _userTranslation) *
-            mx::Matrix44::createScale(mx::Vector3(scale * _cameraZoom)));
-        _viewCamera->setViewMatrix(arcball * viewMatrix);
-        _viewCamera->setProjectionMatrix(projectionMatrix);
+        _viewCamera->setWorldMatrix(mx::Matrix44::createScale(scale) * meshRotation * mx::Matrix44::createTranslation(translation));
 
         _envCamera->setWorldMatrix(mx::Matrix44::createScale(mx::Vector3(300.0f)));
         _envCamera->setViewMatrix(_viewCamera->getViewMatrix());

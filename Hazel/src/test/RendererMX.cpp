@@ -3,6 +3,8 @@
 #include "Hazel/Renderer/RenderCommand.h"
 #include "Hazel/Renderer/Texture.h"
 
+#include "test/MXUtils.h"
+
 #include <MaterialXRenderGlsl/GLUtil.h>
 #include <MaterialXGenShader/DefaultColorManagementSystem.h>
 #include <MaterialXFormat/Util.h>
@@ -48,9 +50,6 @@ namespace Hazel {
         // Initialize environment light.
         s_Data->_light->loadEnvironmentLight();
 
-        // Initialize camera.
-        s_Data->_camera->initCamera();
-
         // Load the requested material document.
         s_Data->_mesh->loadDocument(s_Data->_stdLib);
 
@@ -88,15 +87,49 @@ namespace Hazel {
         Ref<IndexBuffer> gammaIB = IndexBuffer::Create(quadIndices, 6);
         s_Data->GammaVertexArray->SetIndexBuffer(gammaIB);
         delete[] quadIndices;
+
+        // Lines
+        s_Data->LineShader = Shader::Create("../../assets/shaders/Renderer3D_Line.glsl");
+        s_Data->LineVertexBufferBase = new LineVertex[10000];
     }
 
-    void RendererMX::mainloop()
+    void RendererMX::BeginScene(const EditorCamera& camera)
     {
-        while (!glfwWindowShouldClose(s_Data->_glfwWindow))
+        glm::vec3 camPos = camera.GetPosition();
+        glm::mat4 viewProj = camera.GetViewProjection();
+        glm::mat4 viewMatrix = camera.GetViewMatrix();
+        glm::mat4 projection = camera.GetProjection();
+
+        mx::CameraPtr viewCamera = s_Data->_camera->GetViewCamera();
+        viewCamera->setViewMatrix(MXUtils::GlmMat4ToMaterialXMat4(viewMatrix));
+        viewCamera->setProjectionMatrix(MXUtils::GlmMat4ToMaterialXMat4(projection));
+
+        s_Data->LineShader->Bind();
+        s_Data->LineShader->SetMat4("u_ViewProjection", viewProj);
+        s_Data->LineShader->SetFloat3("u_CamPos", camPos);
+        s_Data->LineVertexCount = 0;
+        s_Data->LineVertexBufferPtr = s_Data->LineVertexBufferBase;
+    }
+
+    void RendererMX::EndScene()
+    {
+        if (s_Data->LineVertexCount)
         {
-            draw_contents();
-            glfwSwapBuffers(s_Data->_glfwWindow);
-            glfwPollEvents();
+            // VAO
+            s_Data->LineVertexArray = VertexArray::Create();
+            // VBO
+            uint32_t dataSize = (uint8_t*)s_Data->LineVertexBufferPtr - (uint8_t*)s_Data->LineVertexBufferBase;
+            s_Data->LineVertexBuffer = VertexBuffer::Create(s_Data->LineVertexBufferBase, dataSize);
+            s_Data->LineVertexBuffer->SetLayout({
+                { ShaderDataType::Float3, "a_Position"	},
+                { ShaderDataType::Float4, "a_Color"		},
+                { ShaderDataType::Int,	  "a_EntityID"	},
+            });
+            s_Data->LineVertexArray->AddVertexBuffer(s_Data->LineVertexBuffer);
+
+            s_Data->LineShader->Bind();
+            RenderCommand::SetLineWidth(s_Data->LineWidth);
+            RenderCommand::DrawLines(s_Data->LineVertexArray, s_Data->LineVertexCount);
         }
     }
 
@@ -165,7 +198,7 @@ namespace Hazel {
 
     void RendererMX::draw_contents()
     {
-        s_Data->_camera->updateCameras(s_Data->_mesh, s_Data->_light);
+        s_Data->_camera->UpdateCameras(s_Data->_mesh, s_Data->_light);
 
         mx::checkGlErrors("before viewer render");
 
@@ -188,6 +221,37 @@ namespace Hazel {
         }
 
         mx::checkGlErrors("after viewer render");
+    }
+
+    void RendererMX::DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+    {
+        s_Data->LineVertexBufferPtr->Position = p0;
+        s_Data->LineVertexBufferPtr->Color = color;
+        s_Data->LineVertexBufferPtr->EntityID = entityID;
+        s_Data->LineVertexBufferPtr++;
+        s_Data->LineVertexBufferPtr->Position = p1;
+        s_Data->LineVertexBufferPtr->Color = color;
+        s_Data->LineVertexBufferPtr->EntityID = entityID;
+        s_Data->LineVertexBufferPtr++;
+
+        s_Data->LineVertexCount += 2;
+    }
+
+    void RendererMX::DrawGroundPlane(int rows, int cols, float spacing)
+    {
+        glm::vec4 color(0.8f);
+        for (int i = 0; i <= rows; i++)
+        {
+            glm::vec3 p0 = { (i - rows / 2.0f) * spacing, 0.0f, -(cols / 2.0f) * spacing };
+            glm::vec3 p1 = { (i - rows / 2.0f) * spacing, 0.0f, (cols / 2.0f) * spacing };
+            DrawLines(p0, p1, color);
+        }
+        for (int j = 0; j <= cols; j++)
+        {
+            glm::vec3 p0 = { -(rows / 2.0f) * spacing, 0.0f, (j - cols / 2.0f) * spacing };
+            glm::vec3 p1 = { (rows / 2.0f) * spacing, 0.0f, (j - cols / 2.0f) * spacing };
+            DrawLines(p0, p1, color);
+        }
     }
 
     void RendererMX::invalidateShadowMap()

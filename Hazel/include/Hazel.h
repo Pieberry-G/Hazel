@@ -23,7 +23,6 @@
 
 // ---Renderer---------------------------
 #include "Hazel/Renderer/Renderer.h"
-#include "Hazel/Renderer/Renderer2D.h"
 #include "test/RendererMX.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
