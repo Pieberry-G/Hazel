@@ -2,7 +2,6 @@
 
 #include "Hazel/Core/UUID.h"
 #include "Hazel/Core/Timestep.h"
-#include "Hazel/Renderer/Renderer3D.h"
 #include "Hazel/Renderer/EditorCamera.h"
 
 #include "entt.hpp"
@@ -33,11 +32,11 @@ namespace Hazel {
 		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
-	private:
-		LightParams GetLightParams();
 
+	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
+
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;

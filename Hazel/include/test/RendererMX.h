@@ -6,6 +6,10 @@
 #include "test/RenderPipeline.h"
 #include "test/RenderPipelineGL.h"
 
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/FrameBuffer.h"
+
 #include <MaterialXRender/ShaderMaterial.h>
 #include <MaterialXRender/ImageHandler.h>
 #include <MaterialXGenGlsl/GlslShaderGenerator.h>
@@ -25,6 +29,12 @@ namespace Hazel {
 		std::string filePrefixTerminator;
 	};
 
+	struct QuadVertex
+	{
+		glm::vec3 Position;
+		glm::vec2 TexCoord;
+	};
+
 	struct RendererMXData
 	{
 		RendererMXData(const mx::FileSearchPath& searchPath,
@@ -36,7 +46,7 @@ namespace Hazel {
 			_ambientOcclusionGain(0.6f),
 			_genContext(mx::GlslShaderGenerator::create()),
 			_unitRegistry(mx::UnitConverterRegistry::create()),
-			_drawEnvironment(true),
+			_drawEnvironment(false),
 			_outlineSelection(false),
 			_renderTransparency(true),
 			_renderDoubleSided(true),
@@ -105,6 +115,9 @@ namespace Hazel {
 		GLFWwindow* _glfwWindow;
 		mx::Color3 _screenColor;
 		int m_fbsize[2] = { 1920, 1080 };
+
+		Ref<VertexArray> GammaVertexArray;
+		Ref<Shader> GammaShader;
 	};
 
 	class RendererMX
@@ -119,6 +132,7 @@ namespace Hazel {
 		static void loadStandardLibraries();
 		static void invalidateShadowMap();
 	
+		static void GammaCorrection(Ref<FrameBuffer> frameBuffer);
 	public:
 		static RendererMXData* s_Data;
 	};

@@ -5,7 +5,6 @@
 #include "Hazel/Scene/Entity.h"
 #include "Hazel/Scene/ScriptableEntity.h"
 #include "Hazel/Renderer/Renderer2D.h"
-#include "Hazel/Renderer/Renderer3D.h"
 #include "test/RendererMX.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
@@ -67,9 +66,6 @@ namespace Hazel {
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<SphereRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
@@ -141,31 +137,7 @@ namespace Hazel {
 
 		if(mainCamera)
 		{
-			Renderer3D::BeginScene(*mainCamera, cameraTransform);
 
-			LightParams lightParams = GetLightParams();
-
-			// Draw sphere
-			{
-				auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
-				for (auto entity : view)
-				{
-					auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
-					Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
-				}
-			}
-/*
-			// Draw sprites
-			{
-				auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-				for (auto entity : group)
-				{
-					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer3D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				}
-			}
-*/
-			Renderer3D::EndScene();
 		}
 	}
 
@@ -227,9 +199,6 @@ namespace Hazel {
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<SphereRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<PointLightComponent>(newEntity, entity);
-		CopyComponentIfExists<DirectionalLightComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 	}
@@ -244,27 +213,6 @@ namespace Hazel {
 				return Entity{ entity, this };
 		}
 		return {};
-	}
-
-	LightParams Scene::GetLightParams()
-	{
-		LightParams lightParams;
-
-		auto pointLightView = m_Registry.view<TransformComponent, PointLightComponent>();
-		for (auto entity : pointLightView)
-		{
-			auto [transform, pointLight] = pointLightView.get<TransformComponent, PointLightComponent>(entity);
-			lightParams.PointLightPositions.push_back(transform.Translation);
-			lightParams.PointLightColors.push_back(pointLight.Color);
-		}
-		auto directionalLightView = m_Registry.view<TransformComponent, DirectionalLightComponent>();
-		for (auto entity : directionalLightView)
-		{
-			auto [transform, directionalLight] = directionalLightView.get<TransformComponent, DirectionalLightComponent>(entity);
-			lightParams.DirectionalLightDirection = directionalLight.Direction;
-			lightParams.DirectionalLightColor = directionalLight.Color;
-		}
-		return lightParams;
 	}
 
 	template<typename T>
@@ -291,21 +239,6 @@ namespace Hazel {
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<SphereRendererComponent>(Entity entity, SphereRendererComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component)
 	{
 	}
 

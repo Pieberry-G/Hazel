@@ -5,12 +5,16 @@
 #include "Hazel/Utils/PlatformUtils.h"
 #include "Hazel/Math/Math.h"
 
+#include <MaterialXRender/Util.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 #include <ImGuizmo.h>
 
 namespace Hazel {
+
+	namespace mx = MaterialX;
 
 	EditorLayer3D::EditorLayer3D()
 		: Layer("EditorLayer3D")
@@ -130,9 +134,10 @@ namespace Hazel {
 		}
 
 		// Render
-		Renderer3D::ResetStats();
+		//Renderer3D::ResetStats();
 		m_FrameBuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		mx::Color3 color = mx::DEFAULT_SCREEN_COLOR_LIN_REC709;
+		RenderCommand::SetClearColor({ color[0], color[1], color[2], 1.0f});
 		RenderCommand::Clear();
 
 		// Clear our entity ID attachment to -1
@@ -146,6 +151,7 @@ namespace Hazel {
 				m_EditorCamera.OnUpdate(ts);
 
 				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				RendererMX::GammaCorrection(m_FrameBuffer);
 				break;
 			}
 			case SceneState::Play:
@@ -264,9 +270,9 @@ namespace Hazel {
 			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
-		auto stats = Renderer3D::GetStats();
-		ImGui::Text("Renderer3D Stats:");
-		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+		//auto stats = Renderer3D::GetStats();
+		//ImGui::Text("Renderer3D Stats:");
+		//ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		//ImGui::Text("Spheres: %d", stats.SphereCount);
 		//ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		//ImGui::Text("Indices: %d", stats.GetTotalIndexCount());

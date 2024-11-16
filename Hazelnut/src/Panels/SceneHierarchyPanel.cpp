@@ -261,33 +261,6 @@ namespace Hazel {
 				}
 			}
 
-			if (!m_SelectionContext.HasComponent<SphereRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sphere Renderer"))
-				{
-					m_SelectionContext.AddComponent<SphereRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<PointLightComponent>())
-			{
-				if (ImGui::MenuItem("Point Light"))
-				{
-					m_SelectionContext.AddComponent<PointLightComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<DirectionalLightComponent>())
-			{
-				if (ImGui::MenuItem("Directional Light"))
-				{
-					m_SelectionContext.AddComponent<DirectionalLightComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
 			ImGui::EndPopup();
 		}
 
@@ -399,23 +372,5 @@ namespace Hazel {
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 
-		DrawComponent<SphereRendererComponent>("Sphere Renderer", entity, [](auto& component)
-		{
-			DrawControl("Albedo", [&](){ ImGui::ColorEdit3("", glm::value_ptr(component.Material.Albedo)); });
-			DrawControl("Metallic", [&](){ ImGui::DragFloat("", &component.Material.Metallic, 0.005f, 0.0f, 1.0f, "%.2f"); });
-			DrawControl("Roughness", [&](){ ImGui::DragFloat("", &component.Material.Roughness, 0.005f, 0.0f, 1.0f, "%.2f"); });
-			DrawControl("Ao", [&](){ ImGui::DragFloat("", &component.Material.Ao, 0.005f, 0.0f, 1.0f, "%.2f"); });
-		});
-
-		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component)
-		{
-			DrawControl("Color", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Color), 1.0f, 0.0f, 0.0f, "%.2f"); });
-		});
-
-		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
-		{
-			DrawControl("Direction", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Direction), 1.0f, 0.0f, 0.0f, "%.2f"); });
-			DrawControl("Color", [&]() { ImGui::DragFloat3("", glm::value_ptr(component.Color), 1.0f, 0.0f, 0.0f, "%.2f"); });
-		});
 	}
 }

@@ -54,12 +54,9 @@ namespace Hazel {
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
 
-		virtual void SetData(void* data, uint32_t size, uint32_t textureIndex = 0) = 0;
-		virtual void SetDataFromFrameBuffer(const Ref<FrameBuffer>& frameBuffer, uint32_t textureIndex = 0, int level = 0) = 0;
-
-		virtual void GenerateMipmaps() const = 0;
+		virtual void SetData(void* data, uint32_t size) = 0;
 		
-		virtual void Bind(uint32_t slot = 0, uint32_t textureIndex = 0) const = 0;
+		virtual void Bind(uint32_t slot = 0) const = 0;
 
 		virtual bool IsLoaded() const = 0;
 
@@ -72,13 +69,6 @@ namespace Hazel {
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
 		static Ref<Texture2D> Create(const std::string& path, StbImage& stbImage = StbImage());
 		static Ref<Texture2D> Create(const Ref<FrameBuffer>& frameBuffer);
-		static Ref<Texture2D> CreateHdr(const std::string& hdrPath);
-	};
-
-	class TextureCube : public Texture
-	{
-	public:
-		static Ref<TextureCube> Create(uint32_t width, uint32_t height);
 	};
 
 }
