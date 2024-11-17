@@ -146,38 +146,11 @@ namespace Hazel {
 		RendererMX::draw_contents();
 		RendererMX::DrawGroundPlane(20, 20, 1.0f);
 		RendererMX::EndScene();
+	}
 
-		//Renderer3D::BeginScene(camera);
-
-		//LightParams lightParams = GetLightParams();
-
-		//// Draw sphere
-		//{
-		//	auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
-		//	for (auto entity : view)
-		//	{
-		//		auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
-		//		Renderer3D::DrawSphere(transform.GetTransform(), sphere, lightParams, (int)entity);
-		//	}
-		//}
-
-		//Renderer3D::DrawGroundPlane(15, 15, 1.0f);
-/*
-		// Draw sprite
-		{
-			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer3D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-			}
-		}
-*/
-		//Renderer2D::BeginScene(camera);
-		//Renderer2D::DrawQuad(glm::vec3(0.0f), glm::vec3(1.0f), ResourceManager::Get()->Get2DTexture("IBL"));
-		//Renderer2D::EndScene();
-
-		//Renderer3D::EndScene();
+	void Scene::DrawPickBuffer(EditorCamera& camera, int entityID)
+	{
+		RendererMX::DrawPickBuffer(camera, entityID);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

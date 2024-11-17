@@ -33,7 +33,7 @@ namespace Hazel {
     {
     }
 
-    void MXCamera::UpdateCameras(MXMeshPtr mesh, MXLightPtr light)
+    void MXCamera::UpdateCameras(Ref<MXMesh> mesh, Ref<MXLight> light)
     {
         //const mx::Vector3 translation = RendererMX::s_Data->_mesh->getMeshTranslation();
         //const mx::Vector3 rotation = RendererMX::s_Data->_mesh->getMeshRotation();

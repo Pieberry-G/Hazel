@@ -131,7 +131,7 @@ namespace Hazel {
         }
 
         // Clean up.
-        glViewport(0, 0, RendererMX::s_Data->m_fbsize[0], RendererMX::s_Data->m_fbsize[1]);
+        //glViewport(0, 0, RendererMX::s_Data->m_fbsize[0], RendererMX::s_Data->m_fbsize[1]);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
         lightHandler->setEnvPrefilteredMap(outTex);
@@ -224,7 +224,7 @@ namespace Hazel {
                 }
 
                 // Restore state for scene rendering.
-                glViewport(0, 0, RendererMX::s_Data->m_fbsize[0], RendererMX::s_Data->m_fbsize[1]);
+                //glViewport(0, 0, RendererMX::s_Data->m_fbsize[0], RendererMX::s_Data->m_fbsize[1]);
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
                 glDrawBuffer(GL_BACK);
             }

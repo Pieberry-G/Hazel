@@ -27,6 +27,8 @@ namespace Hazel {
 
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
+		void DrawPickBuffer(EditorCamera& camera, int entityID);
+
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void DuplicateEntity(Entity entity);

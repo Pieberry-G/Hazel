@@ -40,7 +40,8 @@ namespace Hazel {
 		// UI Panels
 		void UI_Toolbar();
 	private:
-		Ref<FrameBuffer> m_FrameBuffer;
+		Ref<FrameBuffer> m_SceneFrameBuffer;
+		Ref<FrameBuffer> m_PickFrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;

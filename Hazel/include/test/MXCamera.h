@@ -9,14 +9,12 @@ namespace Hazel {
 
 	namespace mx = MaterialX;
 
-	using MXCameraPtr = std::shared_ptr<class MXCamera>;
-
 	class MXCamera
 	{
 	public:
 		MXCamera();
 
-		void UpdateCameras(MXMeshPtr mesh, MXLightPtr light);
+		void UpdateCameras(Ref<MXMesh> mesh, Ref<MXLight> light);
 
 		mx::CameraPtr GetViewCamera() const { return _viewCamera; }
 		mx::CameraPtr GetEnvCamera() const { return _envCamera; }

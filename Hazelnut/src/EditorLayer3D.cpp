@@ -26,11 +26,17 @@ namespace Hazel {
 		m_IconPlay = Texture2D::Create("../../Hazelnut/Resources/Icons/PlayButton.png");
 		m_IconStop = Texture2D::Create("../../Hazelnut/Resources/Icons/StopButton.png");
 
-		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1920;
-		fbSpec.Height = 1080;
-		m_FrameBuffer = FrameBuffer::Create(fbSpec);
+		FramebufferSpecification sceneFbSpec;
+		sceneFbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+		sceneFbSpec.Width = 1920;
+		sceneFbSpec.Height = 1080;
+		m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpec);
+
+		FramebufferSpecification pickFbSpec;
+		pickFbSpec.Attachments = { FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+		pickFbSpec.Width = 1920;
+		pickFbSpec.Height = 1080;
+		m_PickFrameBuffer = FrameBuffer::Create(pickFbSpec);
 
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
@@ -121,27 +127,22 @@ namespace Hazel {
 	void EditorLayer3D::OnUpdate(float ts)
 	{
 		// Resize
-		if (FramebufferSpecification spec = m_FrameBuffer->GetSpecification();
+		if (FramebufferSpecification spec = m_SceneFrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
-			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneFrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_PickFrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
-			RendererMX::s_Data->m_fbsize[0] = (int)m_ViewportSize.x;
-			RendererMX::s_Data->m_fbsize[1] = (int)m_ViewportSize.y;
 		}
 
 		// Render
 		//Renderer3D::ResetStats();
-		m_FrameBuffer->Bind();
+		m_SceneFrameBuffer->Bind();
 		mx::Color3 color = mx::DEFAULT_SCREEN_COLOR_LIN_REC709;
 		RenderCommand::SetClearColor({ color[0], color[1], color[2], 1.0f});
 		RenderCommand::Clear();
-
-		// Clear our entity ID attachment to -1
-		m_FrameBuffer->ClearAttachment(1, -1);
 
 		// Update scene
 		switch (m_SceneState)
@@ -151,7 +152,6 @@ namespace Hazel {
 				m_EditorCamera.OnUpdate(ts);
 
 				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-				RendererMX::GammaCorrection(m_FrameBuffer);
 				break;
 			}
 			case SceneState::Play:
@@ -160,6 +160,15 @@ namespace Hazel {
 				break;
 			}
 		}
+		RendererMX::GammaCorrection(m_SceneFrameBuffer);
+		m_SceneFrameBuffer->Unbind();
+
+		m_PickFrameBuffer->Bind();
+		RenderCommand::Clear();
+		// Clear our entity ID attachment to -1
+		m_PickFrameBuffer->ClearAttachment(0, -1);
+		if (m_SceneState == SceneState::Edit)
+			m_ActiveScene->DrawPickBuffer(m_EditorCamera, 10);
 
 		auto[mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -171,12 +180,12 @@ namespace Hazel {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+			int pixelData = m_PickFrameBuffer->ReadPixel(0, mouseX, mouseY);
+			HZ_CORE_INFO("{0}", pixelData);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
 			m_HoveredEntity = Entity();
 		}
-
-		m_FrameBuffer->Unbind();
+		m_PickFrameBuffer->Unbind();
 	}
 
 	void EditorLayer3D::OnImGuiRender()
@@ -298,7 +307,7 @@ namespace Hazel {
 		ImVec2 viewportPenelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPenelSize.x, viewportPenelSize.y };
 
-		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+		uint32_t textureID = m_SceneFrameBuffer->GetColorAttachmentRendererID(0);
 		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 		if (ImGui::BeginDragDropTarget())

@@ -1,7 +1,6 @@
 #include <Hazel.h>
 #include <Hazel/Core/EntryPoint.h>
 
-#include "EditorLayer.h"
 #include "EditorLayer3D.h"
 
 namespace Hazel {
@@ -11,7 +10,6 @@ namespace Hazel {
 	public:
 		HazelnutApp()
 		{
-			//PushLayer(new EditorLayer());
 			PushLayer(new EditorLayer3D());
 		}
 

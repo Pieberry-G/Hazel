@@ -7,16 +7,9 @@ namespace Hazel {
 
 	namespace mx = MaterialX;
 
-	using MXMeshPtr = std::shared_ptr<class MXMesh>;
-
 	class MXMesh
 	{
 	public:
-		static MXMeshPtr create()
-		{
-			return std::make_shared<MXMesh>();
-		}
-
 		MXMesh();
 
 		void createGeometryHandler();

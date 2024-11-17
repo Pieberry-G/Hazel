@@ -32,9 +32,12 @@ namespace Hazel {
 	{
 		glm::vec3 Position;
 		glm::vec4 Color;
+	};
 
-		// Editor-only
-		int EntityID;
+	struct PickVertex
+	{
+		glm::vec3 Position;
+		glm::vec2 TexCoord;
 	};
 
 	class DocumentModifiers
@@ -76,9 +79,9 @@ namespace Hazel {
 			_camera = CreateRef<MXCamera>();
 		}
 
-		MXMeshPtr _mesh;
-		MXLightPtr _light;
-		MXCameraPtr _camera;
+		Ref<MXMesh> _mesh;
+		Ref<MXLight> _light;
+		Ref<MXCamera> _camera;
 		RenderPipelinePtr _renderPipeline;
 
 		mx::FileSearchPath _searchPath;
@@ -124,7 +127,6 @@ namespace Hazel {
 
 		GLFWwindow* _glfwWindow;
 		mx::Color3 _screenColor;
-		int m_fbsize[2] = { 1920, 1080 };
 
 		Ref<VertexArray> GammaVertexArray;
 		Ref<Shader> GammaShader;
@@ -137,6 +139,17 @@ namespace Hazel {
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
 		float LineWidth = 2.0f;
+
+		// Pick Buffer
+		Ref<Shader> PickShader;
+		Ref<VertexArray> PickVertexArray;
+		Ref<VertexBuffer> PickVertexBuffer;
+		Ref<IndexBuffer> PickIndexBuffer;
+		uint32_t PickVertexCount = 0;
+		PickVertex* PickVertexBufferBase = nullptr;
+		PickVertex* PickVertexBufferPtr = nullptr;
+		uint32_t* PickIndexBufferBase = nullptr;
+		uint32_t* PickIndexBufferPtr = nullptr;
 	};
 
 	class RendererMX
@@ -148,8 +161,10 @@ namespace Hazel {
 		static void EndScene();
 
 		static void draw_contents();
-		static void DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID = -1);
+		static void DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
 		static void DrawGroundPlane(int rows, int cols, float spacing = 1.0f);
+
+		static void DrawPickBuffer(const EditorCamera& camera, int entityID);
 
 		static void renderScreenSpaceQuad(mx::MaterialPtr material);
 		

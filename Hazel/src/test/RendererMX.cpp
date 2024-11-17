@@ -26,14 +26,6 @@ namespace Hazel {
             { "libraries" },
             mx::DEFAULT_SCREEN_COLOR_SRGB);
 
-        //glfwInit();
-        //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        //s_Data->_glfwWindow = glfwCreateWindow(1920, 1080, "Test", NULL, NULL);
-        //glfwMakeContextCurrent(s_Data->_glfwWindow);
-        //gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
         // Initialize the standard libraries and color/unit management.
         loadStandardLibraries();
 
@@ -54,7 +46,7 @@ namespace Hazel {
         s_Data->_mesh->loadDocument(s_Data->_stdLib);
 
 
-        // Quad
+        // Gamma Correction
         s_Data->GammaShader = Shader::Create("../../assets/shaders/GammaCorrection.glsl");
         s_Data->GammaShader->Bind();
         s_Data->GammaShader->SetInt("u_Texture", 0);
@@ -89,8 +81,11 @@ namespace Hazel {
         delete[] quadIndices;
 
         // Lines
-        s_Data->LineShader = Shader::Create("../../assets/shaders/Renderer3D_Line.glsl");
-        s_Data->LineVertexBufferBase = new LineVertex[10000];
+        s_Data->LineShader = Shader::Create("../../assets/shaders/DrawLine.glsl");
+        s_Data->LineVertexBufferBase = new LineVertex[100000];
+
+        // Pick Buffer
+        s_Data->PickShader = Shader::Create("../../assets/shaders/PickBuffer.glsl");
     }
 
     void RendererMX::BeginScene(const EditorCamera& camera)
@@ -123,7 +118,6 @@ namespace Hazel {
             s_Data->LineVertexBuffer->SetLayout({
                 { ShaderDataType::Float3, "a_Position"	},
                 { ShaderDataType::Float4, "a_Color"		},
-                { ShaderDataType::Int,	  "a_EntityID"	},
             });
             s_Data->LineVertexArray->AddVertexBuffer(s_Data->LineVertexBuffer);
 
@@ -223,15 +217,13 @@ namespace Hazel {
         mx::checkGlErrors("after viewer render");
     }
 
-    void RendererMX::DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+    void RendererMX::DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
     {
         s_Data->LineVertexBufferPtr->Position = p0;
         s_Data->LineVertexBufferPtr->Color = color;
-        s_Data->LineVertexBufferPtr->EntityID = entityID;
         s_Data->LineVertexBufferPtr++;
         s_Data->LineVertexBufferPtr->Position = p1;
         s_Data->LineVertexBufferPtr->Color = color;
-        s_Data->LineVertexBufferPtr->EntityID = entityID;
         s_Data->LineVertexBufferPtr++;
 
         s_Data->LineVertexCount += 2;
@@ -251,6 +243,46 @@ namespace Hazel {
             glm::vec3 p0 = { -(rows / 2.0f) * spacing, 0.0f, (j - cols / 2.0f) * spacing };
             glm::vec3 p1 = { (rows / 2.0f) * spacing, 0.0f, (j - cols / 2.0f) * spacing };
             DrawLines(p0, p1, color);
+        }
+    }
+
+    void RendererMX::DrawPickBuffer(const EditorCamera& camera, int entityID)
+    {
+        glm::mat4 viewProj = camera.GetViewProjection();
+
+        s_Data->PickShader->Bind();
+        s_Data->PickShader->SetMat4("u_ViewProjection", viewProj);
+        s_Data->PickShader->SetInt("u_EntityID", entityID);
+
+        // Pick buffer
+        Ref<VertexArray> pickVertexArray = VertexArray::Create();
+
+        auto& geometryHandler = s_Data->_mesh->getGeometryHandler();
+        for (auto mesh : geometryHandler->getMeshes())
+        {
+            mx::MeshStreamPtr stream = mesh->getStream("position", 0);
+            mx::MeshFloatBuffer& attributeData = stream->getData();
+            uint32_t stride = stream->getStride();
+
+            // VBO
+            const float* bufferData = &attributeData[0];
+            size_t bufferSize = attributeData.size() * sizeof(float);
+            Ref<VertexBuffer> pickVertexBuffer = VertexBuffer::Create((void*)bufferData, bufferSize);
+            pickVertexBuffer->SetLayout({
+                { ShaderDataType::Float3, "a_Position" },
+            });
+            pickVertexArray->AddVertexBuffer(pickVertexBuffer);
+
+            // IBO
+            //for (size_t i = 0; i < mesh->getPartitionCount(); i++)
+            for (size_t i = 0; i < 1; i++)
+            {
+                mx::MeshPartitionPtr geom = mesh->getPartition(i);
+                mx::MeshIndexBuffer& indexData = geom->getIndices();
+                Ref<IndexBuffer> pickIndexBuffer = IndexBuffer::Create(indexData.data(), indexData.size());
+                pickVertexArray->SetIndexBuffer(pickIndexBuffer);
+                RenderCommand::DrawIndexed(pickVertexArray, indexData.size());
+            }
         }
     }
 

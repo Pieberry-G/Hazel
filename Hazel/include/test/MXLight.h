@@ -8,16 +8,9 @@ namespace Hazel {
 
 	namespace mx = MaterialX;
 
-	using MXLightPtr = std::shared_ptr<class MXLight>;
-
 	class MXLight
 	{
 	public:
-		static MXLightPtr create()
-		{
-			return std::make_shared<MXLight>();
-		}
-
 		MXLight();
 
 		void createEnvGeometryHandler();
