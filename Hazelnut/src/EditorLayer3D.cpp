@@ -43,43 +43,15 @@ namespace Hazel {
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		//// Entity
-		//PbrMaterial material(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.1f, 1.0f);
-		//Entity purpleSphere = m_ActiveScene->CreateEntity("Glass Sphere");
-		//purpleSphere.AddComponent<SphereRendererComponent>(material);
-		//purpleSphere.GetComponent<TransformComponent>().Translation = { -1.5f, 1.0f, 0.0f };
+		// Entity
+		Entity mesh = m_ActiveScene->CreateEntity("Mesh");
+		mesh.AddComponent<MeshComponent>("resources/Geometry/shaderball.glb");
 
-		//Entity glassSphere = m_ActiveScene->CreateEntity("Plastic Sphere");
-		//glassSphere.AddComponent<SphereRendererComponent>(ResourceManager::Get()->GetPbrTexture("plastic"));
-		//glassSphere.GetComponent<TransformComponent>().Translation = { 1.5f, 1.0f, 0.0f };
-
-		//Entity pointLight1 = m_ActiveScene->CreateEntity("Point Light");
-		//pointLight1.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		//pointLight1.GetComponent<TransformComponent>().Translation = { 5.0f, 5.0f, -5.0f };
-
-		//Entity pointLight2 = m_ActiveScene->CreateEntity("Point Light");
-		//pointLight2.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		//pointLight2.GetComponent<TransformComponent>().Translation = { -5.0f, 5.0f, -5.0f };
-
-		//Entity pointLight3 = m_ActiveScene->CreateEntity("Point Light");
-		//pointLight3.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		//pointLight3.GetComponent<TransformComponent>().Translation = { -5.0f, -5.0f, -5.0f };
-
-		//Entity pointLight4 = m_ActiveScene->CreateEntity("Point Light");
-		//pointLight4.AddComponent<PointLightComponent>(glm::vec3(300.0f));
-		//pointLight4.GetComponent<TransformComponent>().Translation = { 5.0f, -5.0f, -5.0f };
-
-		//Entity camera = m_ActiveScene->CreateEntity("Camera");
-		//camera.AddComponent<CameraComponent>();
+		Entity mesh2 = m_ActiveScene->CreateEntity("Mesh2");
+		mesh2.AddComponent<MeshComponent>("resources/Geometry/shaderball.glb");
+		mesh2.GetComponent<TransformComponent>().Translation.x = 3.0f;
 
 #if 0
-		// Entity
-		Entity square = m_ActiveScene->CreateEntity("Green Square");
-		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-
-		Entity redSquare = m_ActiveScene->CreateEntity("Red Square");
-		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-
 		m_CameraA = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraA.AddComponent<CameraComponent>();
 
@@ -168,7 +140,7 @@ namespace Hazel {
 		// Clear our entity ID attachment to -1
 		m_PickFrameBuffer->ClearAttachment(0, -1);
 		if (m_SceneState == SceneState::Edit)
-			m_ActiveScene->DrawPickBuffer(m_EditorCamera, 10);
+			m_ActiveScene->DrawPickBuffer(m_EditorCamera);
 
 		auto[mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -181,9 +153,7 @@ namespace Hazel {
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_PickFrameBuffer->ReadPixel(0, mouseX, mouseY);
-			HZ_CORE_INFO("{0}", pixelData);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
-			m_HoveredEntity = Entity();
 		}
 		m_PickFrameBuffer->Unbind();
 	}

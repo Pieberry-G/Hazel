@@ -82,9 +82,9 @@ namespace Hazel {
     } // anonymous namespace
 
 
-    MXMesh::MXMesh() :
+    MXMesh::MXMesh(const std::string& filePath) :
         _materialFilename("resources/Materials/Examples/StandardSurface/standard_surface_carpaint.mtlx"),
-        _meshFilename("resources/Geometry/shaderball.glb"),
+        _meshFilename(filePath),
         _meshScale(1.0f),
         _selectedGeom(0),
         _selectedMaterial(0),
@@ -93,6 +93,10 @@ namespace Hazel {
         _showAllInputs(false),
         _flattenSubgraphs(false)
     {
+        createGeometryHandler();
+
+        // Load the requested material document.
+       loadDocument(RendererMX::s_Data->_stdLib);
     }
 
     void MXMesh::createGeometryHandler()

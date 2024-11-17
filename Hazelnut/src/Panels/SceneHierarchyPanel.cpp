@@ -252,11 +252,11 @@ namespace Hazel {
 				}
 			}
 
-			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
+			if (!m_SelectionContext.HasComponent<MeshComponent>())
 			{
-				if (ImGui::MenuItem("Sprite Renderer"))
+				if (ImGui::MenuItem("Mesh"))
 				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					m_SelectionContext.AddComponent<MeshComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -349,7 +349,7 @@ namespace Hazel {
 			}
 		});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		/*DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 			
@@ -370,7 +370,7 @@ namespace Hazel {
 			}
 
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
-		});
+		});*/
 
 	}
 }

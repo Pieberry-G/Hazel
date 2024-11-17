@@ -10,7 +10,7 @@ namespace Hazel {
 	class MXMesh
 	{
 	public:
-		MXMesh();
+		MXMesh(const std::string& filePath = "resources/Geometry/shaderball.glb");
 
 		void createGeometryHandler();
 		void loadDocument(mx::DocumentPtr libraries);

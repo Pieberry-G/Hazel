@@ -136,16 +136,16 @@ namespace Hazel {
 			out << YAML::EndMap; // CameraComponent
 		}
 
-		if (entity.HasComponent<SpriteRendererComponent>())
-		{
-			out << YAML::Key << "SpriteRendererComponent";
-			out << YAML::BeginMap; // SpriteRendererComponent
+		//if (entity.HasComponent<SpriteRendererComponent>())
+		//{
+		//	out << YAML::Key << "SpriteRendererComponent";
+		//	out << YAML::BeginMap; // SpriteRendererComponent
 
-			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
-			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+		//	auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+		//	out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 
-			out << YAML::EndMap; // SpriteRendererComponent
-		}
+		//	out << YAML::EndMap; // SpriteRendererComponent
+		//}
 
 		out << YAML::EndMap; // Entity
 	}
@@ -237,12 +237,12 @@ namespace Hazel {
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
 				}
 
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
-				{
-					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
-					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-				}
+				//auto spriteRendererComponent = entity["SpriteRendererComponent"];
+				//if (spriteRendererComponent)
+				//{
+				//	auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+				//	src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+				//}
 			}
 		}
 

@@ -4,6 +4,8 @@
 #include "Hazel/Scene/SceneCamera.h"
 #include "Hazel/Core/UUID.h"
 
+#include "test/MXMesh.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -49,18 +51,25 @@ namespace Hazel {
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
+
+		glm::mat4 GetCameraWorldMatrix()
+		{
+			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
+
+			return glm::scale(glm::mat4(1.0f), Scale)
+				*rotation
+				* glm::translate(glm::mat4(1.0f), Translation);
+		}
 	};
 
-	struct SpriteRendererComponent
+	struct MeshComponent
 	{
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		Ref<Texture2D> Texture;
-		float TilingFactor = 1.0f;
-
-		SpriteRendererComponent() = default;
-		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
-			: Color(color) {}
+		MXMesh Mesh;
+	
+		MeshComponent() = default;
+		MeshComponent(const MeshComponent&) = default;
+		MeshComponent(const std::string& filePath)
+			: Mesh(filePath) {}
 	};
 
 	struct CameraComponent

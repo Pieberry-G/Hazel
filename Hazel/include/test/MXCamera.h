@@ -3,7 +3,10 @@
 #include "test/MXLight.h"
 #include "test/MXMesh.h"
 
+#include "Hazel/Scene/Components.h"
+
 #include <MaterialXRender/Camera.h>
+#include <glm/glm.hpp>
 
 namespace Hazel {
 
@@ -14,7 +17,7 @@ namespace Hazel {
 	public:
 		MXCamera();
 
-		void UpdateCameras(Ref<MXMesh> mesh, Ref<MXLight> light);
+		void UpdateCameras(MXMesh& mesh, TransformComponent& tc, Ref<MXLight> light);
 
 		mx::CameraPtr GetViewCamera() const { return _viewCamera; }
 		mx::CameraPtr GetEnvCamera() const { return _envCamera; }

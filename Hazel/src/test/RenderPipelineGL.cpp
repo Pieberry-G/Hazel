@@ -35,14 +35,6 @@ namespace Hazel {
         return mx::GlslMaterial::create();
     }
 
-    void GLRenderPipeline::initFramebuffer(int, int, void*)
-    {
-    }
-
-    void GLRenderPipeline::resizeFramebuffer(int, int, void*)
-    {
-    }
-
     void GLRenderPipeline::updatePrefilteredMap()
     {
         auto& genContext = RendererMX::s_Data->_genContext;
@@ -137,13 +129,13 @@ namespace Hazel {
         lightHandler->setEnvPrefilteredMap(outTex);
     }
 
-    mx::ImagePtr GLRenderPipeline::getShadowMap(int shadowMapSize)
+    mx::ImagePtr GLRenderPipeline::getShadowMap(MXMesh& mesh, int shadowMapSize)
     {
         auto& genContext = RendererMX::s_Data->_genContext;
         auto& imageHandler = RendererMX::s_Data->_imageHandler;
         auto& shadowCamera = RendererMX::s_Data->_camera->GetShadowCamera();
         auto& stdLib = RendererMX::s_Data->_stdLib;
-        auto& geometryHandler = RendererMX::s_Data->_mesh->getGeometryHandler();
+        auto& geometryHandler = mesh.getGeometryHandler();
 
         if (!RendererMX::s_Data->_shadowMap)
         {
@@ -234,7 +226,7 @@ namespace Hazel {
     }
 
 
-    void GLRenderPipeline::renderFrame(void*, int shadowMapSize, const char* dirLightNodeCat)
+    void GLRenderPipeline::renderFrame(MXMesh& mesh, void*, int shadowMapSize, const char* dirLightNodeCat)
     {
         auto& genContext = RendererMX::s_Data->_genContext;
         auto& lightHandler = RendererMX::s_Data->_light->getLightHandler();
@@ -244,10 +236,10 @@ namespace Hazel {
         auto& shadowCamera = RendererMX::s_Data->_camera->GetShadowCamera();
         float lightRotation = RendererMX::s_Data->_light->getLightRotation();
         auto& searchPath = RendererMX::s_Data->_searchPath;
-        auto& geometryHandler = RendererMX::s_Data->_mesh->getGeometryHandler();
+        auto& geometryHandler = mesh.getGeometryHandler();
 
         // Update prefiltered environment.
-        if (lightHandler->getUsePrefilteredMap() && !RendererMX::s_Data->_mesh->getMaterialAssignments().empty())
+        if (lightHandler->getUsePrefilteredMap() && !mesh.getMaterialAssignments().empty())
         {
             updatePrefilteredMap();
         }
@@ -270,7 +262,7 @@ namespace Hazel {
         mx::NodePtr dirLight = lightHandler->getFirstLightOfCategory(dirLightNodeCat);
         if (genContext.getOptions().hwShadowMap && dirLight)
         {
-            mx::ImagePtr shadowMap = getShadowMap(shadowMapSize);
+            mx::ImagePtr shadowMap = getShadowMap(mesh, shadowMapSize);
             if (shadowMap)
             {
                 shadowState.shadowMap = shadowMap;
@@ -326,11 +318,11 @@ namespace Hazel {
         }
 
         // Opaque pass
-        for (const auto& assignment : RendererMX::s_Data->_mesh->getMaterialAssignments())
+        for (const auto& assignment : mesh.getMaterialAssignments())
         {
             mx::MeshPartitionPtr geom = assignment.first;
             mx::GlslMaterialPtr material = std::dynamic_pointer_cast<mx::GlslMaterial>(assignment.second);
-            shadowState.ambientOcclusionMap = RendererMX::s_Data->_mesh->getAmbientOcclusionImage(material);
+            shadowState.ambientOcclusionMap = mesh.getAmbientOcclusionImage(material);
             if (!material)
             {
                 continue;
@@ -354,11 +346,11 @@ namespace Hazel {
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            for (const auto& assignment : RendererMX::s_Data->_mesh->getMaterialAssignments())
+            for (const auto& assignment : mesh.getMaterialAssignments())
             {
                 mx::MeshPartitionPtr geom = assignment.first;
                 mx::GlslMaterialPtr material = std::dynamic_pointer_cast<mx::GlslMaterial>(assignment.second);
-                shadowState.ambientOcclusionMap = RendererMX::s_Data->_mesh->getAmbientOcclusionImage(material);
+                shadowState.ambientOcclusionMap = mesh.getAmbientOcclusionImage(material);
                 if (!material || !material->hasTransparency())
                 {
                     continue;
@@ -388,15 +380,15 @@ namespace Hazel {
         // Wireframe pass
         if (RendererMX::s_Data->_outlineSelection)
         {
-            mx::MaterialPtr wireMaterial = RendererMX::s_Data->_mesh->getWireframeMaterial();
+            mx::MaterialPtr wireMaterial = mesh.getWireframeMaterial();
             if (wireMaterial)
             {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glLineWidth(3.0f);
                 wireMaterial->bindShader();
-                wireMaterial->bindMesh(geometryHandler->findParentMesh(RendererMX::s_Data->_mesh->getSelectedGeometry()));
+                wireMaterial->bindMesh(geometryHandler->findParentMesh(mesh.getSelectedGeometry()));
                 wireMaterial->bindViewInformation(viewCamera);
-                wireMaterial->drawPartition(RendererMX::s_Data->_mesh->getSelectedGeometry());
+                wireMaterial->drawPartition(mesh.getSelectedGeometry());
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
             else

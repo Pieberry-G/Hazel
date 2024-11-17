@@ -59,7 +59,7 @@ namespace Hazel {
 		glm::vec2 m_InitialMousePosition = { 0.0f, 0.0f };
 
 		float m_Distance = 10.0f;
-		float m_Pitch = glm::radians(15.0f), m_Yaw = glm::radians(0.0f);
+		float m_Pitch = glm::radians(15.0f), m_Yaw = glm::radians(-0.0001f);
 
 		float m_ViewportWidth = 1920, m_ViewportHeight = 1080;
 	};

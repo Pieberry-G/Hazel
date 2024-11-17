@@ -10,6 +10,7 @@
 #include "Hazel/Renderer/VertexArray.h"
 #include "Hazel/Renderer/FrameBuffer.h"
 #include "Hazel/Renderer/EditorCamera.h"
+#include "Hazel/Scene/Components.h"
 
 #include <MaterialXRender/ShaderMaterial.h>
 #include <MaterialXRender/ImageHandler.h>
@@ -74,12 +75,12 @@ namespace Hazel {
 			_genContext.getOptions().hwImplicitBitangents = false;
 
 			_renderPipeline = CreateRef<GLRenderPipeline>();
-			_mesh = CreateRef<MXMesh>();
+			//_mesh = CreateRef<MXMesh>();
 			_light = CreateRef<MXLight>();
 			_camera = CreateRef<MXCamera>();
 		}
 
-		Ref<MXMesh> _mesh;
+		//Ref<MXMesh> _mesh;
 		Ref<MXLight> _light;
 		Ref<MXCamera> _camera;
 		RenderPipelinePtr _renderPipeline;
@@ -159,12 +160,13 @@ namespace Hazel {
 		
 		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
-
-		static void draw_contents();
+		static void DrawMesh(MXMesh& mesh, TransformComponent& tc);
 		static void DrawLines(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
 		static void DrawGroundPlane(int rows, int cols, float spacing = 1.0f);
 
-		static void DrawPickBuffer(const EditorCamera& camera, int entityID);
+		static void BeginPick(const EditorCamera& camera);
+		static void EndPick();
+		static void DrawMeshToPickBuffer(MXMesh& mesh, TransformComponent& tc, int entityID);
 
 		static void renderScreenSpaceQuad(mx::MaterialPtr material);
 		

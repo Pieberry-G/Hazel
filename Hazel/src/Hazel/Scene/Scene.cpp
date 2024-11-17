@@ -64,7 +64,7 @@ namespace Hazel {
 
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
@@ -143,14 +143,34 @@ namespace Hazel {
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		RendererMX::BeginScene(camera);
-		RendererMX::draw_contents();
+
+		// Draw Meshes
+		{
+			auto view = m_Registry.view<TransformComponent, MeshComponent>();
+			for (auto entity : view)
+			{
+				auto [tc, mc] = view.get<TransformComponent, MeshComponent>(entity);
+				RendererMX::DrawMesh(mc.Mesh, tc);
+			}
+		}
 		RendererMX::DrawGroundPlane(20, 20, 1.0f);
 		RendererMX::EndScene();
 	}
 
-	void Scene::DrawPickBuffer(EditorCamera& camera, int entityID)
+	void Scene::DrawPickBuffer(EditorCamera& camera)
 	{
-		RendererMX::DrawPickBuffer(camera, entityID);
+		RendererMX::BeginPick(camera);
+
+		// Draw Meshes
+		{
+			auto view = m_Registry.view<TransformComponent, MeshComponent>();
+			for (auto entity : view)
+			{
+				auto [tc, mc] = view.get<TransformComponent, MeshComponent>(entity);
+				RendererMX::DrawMeshToPickBuffer(mc.Mesh, tc, (int)entity);
+			}
+		}
+		RendererMX::EndPick();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -173,7 +193,7 @@ namespace Hazel {
 		Entity newEntity = CreateEntity(entity.GetName());
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
-		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<MeshComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 	}
@@ -213,7 +233,7 @@ namespace Hazel {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
 	{
 	}
 

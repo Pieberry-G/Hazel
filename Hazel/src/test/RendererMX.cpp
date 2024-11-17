@@ -1,9 +1,9 @@
 #include "test/RendererMX.h"
 
+#include "test/MXUtils.h"
+
 #include "Hazel/Renderer/RenderCommand.h"
 #include "Hazel/Renderer/Texture.h"
-
-#include "test/MXUtils.h"
 
 #include <MaterialXRenderGlsl/GLUtil.h>
 #include <MaterialXGenShader/DefaultColorManagementSystem.h>
@@ -33,17 +33,17 @@ namespace Hazel {
         s_Data->_imageHandler = s_Data->_renderPipeline->createImageHandler();
         s_Data->_imageHandler->setSearchPath(s_Data->_searchPath);
 
-        s_Data->_mesh->createGeometryHandler();
+        //s_Data->_mesh->createGeometryHandler();
 
-        s_Data->_renderPipeline->initFramebuffer(1920.0f, 1080.0f, nullptr);
+        //s_Data->_renderPipeline->initFramebuffer(1920.0f, 1080.0f, nullptr);
 
         s_Data->_light->createEnvGeometryHandler();
 
         // Initialize environment light.
         s_Data->_light->loadEnvironmentLight();
 
-        // Load the requested material document.
-        s_Data->_mesh->loadDocument(s_Data->_stdLib);
+        //// Load the requested material document.
+        //s_Data->_mesh->loadDocument(s_Data->_stdLib);
 
 
         // Gamma Correction
@@ -190,19 +190,16 @@ namespace Hazel {
         material->drawPartition(s_Data->_light->getQuadMesh()->getPartition(0));
     }
 
-    void RendererMX::draw_contents()
+    void RendererMX::DrawMesh(MXMesh& mesh, TransformComponent& tc)
     {
-        s_Data->_camera->UpdateCameras(s_Data->_mesh, s_Data->_light);
+        s_Data->_camera->UpdateCameras(mesh, tc, s_Data->_light);
 
         mx::checkGlErrors("before viewer render");
-
-        // Clear the screen.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // Render the current frame.
         try
         {
-            s_Data->_renderPipeline->renderFrame(s_Data->_colorTexture,
+            s_Data->_renderPipeline->renderFrame(mesh, s_Data->_colorTexture,
                 SHADOW_MAP_SIZE,
                 DIR_LIGHT_NODE_CATEGORY.c_str());
         }
@@ -246,18 +243,27 @@ namespace Hazel {
         }
     }
 
-    void RendererMX::DrawPickBuffer(const EditorCamera& camera, int entityID)
+    void RendererMX::BeginPick(const EditorCamera& camera)
     {
         glm::mat4 viewProj = camera.GetViewProjection();
 
         s_Data->PickShader->Bind();
         s_Data->PickShader->SetMat4("u_ViewProjection", viewProj);
-        s_Data->PickShader->SetInt("u_EntityID", entityID);
+    }
 
-        // Pick buffer
+    void RendererMX::EndPick()
+    {
+    }
+
+    void RendererMX::DrawMeshToPickBuffer(MXMesh& mesh, TransformComponent& tc, int entityID)
+    {
+        s_Data->PickShader->Bind();
+        s_Data->PickShader->SetMat4("u_ModelMatrix", tc.GetTransform());
+        s_Data->PickShader->SetInt("u_EntityID", entityID);
+        // VAO
         Ref<VertexArray> pickVertexArray = VertexArray::Create();
 
-        auto& geometryHandler = s_Data->_mesh->getGeometryHandler();
+        auto& geometryHandler = mesh.getGeometryHandler();
         for (auto mesh : geometryHandler->getMeshes())
         {
             mx::MeshStreamPtr stream = mesh->getStream("position", 0);
@@ -274,8 +280,7 @@ namespace Hazel {
             pickVertexArray->AddVertexBuffer(pickVertexBuffer);
 
             // IBO
-            //for (size_t i = 0; i < mesh->getPartitionCount(); i++)
-            for (size_t i = 0; i < 1; i++)
+            for (size_t i = 0; i < mesh->getPartitionCount(); i++)
             {
                 mx::MeshPartitionPtr geom = mesh->getPartition(i);
                 mx::MeshIndexBuffer& indexData = geom->getIndices();

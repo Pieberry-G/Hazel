@@ -1,5 +1,7 @@
 #pragma once
 
+#include "test/MXMesh.h"
+
 #include <MaterialXRender/ShaderMaterial.h>
 #include <MaterialXRender/Camera.h>
 #include <MaterialXRender/GeometryHandler.h>
@@ -36,14 +38,9 @@ namespace Hazel {
 
         virtual void updatePrefilteredMap() = 0;
 
-        virtual void renderFrame(void* color_texture, int shadowMapSize, const char* dirLightNodeCat) = 0;
+        virtual void renderFrame(MXMesh& mesh, void* color_texture, int shadowMapSize, const char* dirLightNodeCat) = 0;
 
-        virtual void initFramebuffer(int width, int height,
-            void* color_texture) = 0;
-        virtual void resizeFramebuffer(int width, int height,
-            void* color_texture) = 0;
-
-        virtual mx::ImagePtr getShadowMap(int shadowMapSize) = 0;
+        virtual mx::ImagePtr getShadowMap(MXMesh& mesh, int shadowMapSize) = 0;
     };
 
 }

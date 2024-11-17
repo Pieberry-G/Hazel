@@ -20,6 +20,7 @@ namespace Hazel {
 		virtual void OnUpdate(float ts) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
+
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseBottonPressed(MouseButtonPressedEvent& e);
@@ -39,6 +40,7 @@ namespace Hazel {
 
 		// UI Panels
 		void UI_Toolbar();
+
 	private:
 		Ref<FrameBuffer> m_SceneFrameBuffer;
 		Ref<FrameBuffer> m_PickFrameBuffer;
@@ -69,7 +71,6 @@ namespace Hazel {
 
 		// Editor resources
 		Ref<Texture2D> m_IconPlay, m_IconStop;
-
 	};
 
 }

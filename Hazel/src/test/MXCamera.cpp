@@ -1,5 +1,6 @@
 #include "test/MXCamera.h"
 #include "test/RendererMX.h"
+#include "test/MXUtils.h"
 
 namespace
 {
@@ -33,21 +34,17 @@ namespace Hazel {
     {
     }
 
-    void MXCamera::UpdateCameras(Ref<MXMesh> mesh, Ref<MXLight> light)
+    void MXCamera::UpdateCameras(MXMesh& mesh, TransformComponent& tc, Ref<MXLight> light)
     {
-        //const mx::Vector3 translation = RendererMX::s_Data->_mesh->getMeshTranslation();
-        //const mx::Vector3 rotation = RendererMX::s_Data->_mesh->getMeshRotation();
-        //const mx::Vector3 scale = RendererMX::s_Data->_mesh->getMeshScale();
-
-        const mx::Vector3 translation = { 0, 0, 0 };
-        const mx::Vector3 rotation = { 0, 0, 0 };
-        const mx::Vector3 scale = { 1, 1, 1 };
+        const glm::vec3& translation = tc.Translation;
+        const glm::vec3& rotation = tc.Rotation;
+        const glm::vec3& scale = tc.Scale;
 
         mx::Matrix44 meshRotation = mx::Matrix44::createRotationZ(rotation[2] / 180.0f * PI) *
             mx::Matrix44::createRotationY(rotation[1] / 180.0f * PI) *
             mx::Matrix44::createRotationX(rotation[0] / 180.0f * PI);
 
-        _viewCamera->setWorldMatrix(mx::Matrix44::createScale(scale) * meshRotation * mx::Matrix44::createTranslation(translation));
+        _viewCamera->setWorldMatrix(MXUtils::GlmMat4ToMaterialXMat4(tc.GetCameraWorldMatrix()));
 
         _envCamera->setWorldMatrix(mx::Matrix44::createScale(mx::Vector3(300.0f)));
         _envCamera->setViewMatrix(_viewCamera->getViewMatrix());
@@ -56,8 +53,8 @@ namespace Hazel {
         mx::NodePtr dirLight = light->getLightHandler()->getFirstLightOfCategory(DIR_LIGHT_NODE_CATEGORY);
         if (dirLight)
         {
-            mx::Vector3 sphereCenter = (RendererMX::s_Data->_mesh->getGeometryHandler()->getMaximumBounds() + RendererMX::s_Data->_mesh->getGeometryHandler()->getMinimumBounds()) * 0.5;
-            float r = (sphereCenter - RendererMX::s_Data->_mesh->getGeometryHandler()->getMinimumBounds()).getMagnitude();
+            mx::Vector3 sphereCenter = (mesh.getGeometryHandler()->getMaximumBounds() + mesh.getGeometryHandler()->getMinimumBounds()) * 0.5;
+            float r = (sphereCenter - mesh.getGeometryHandler()->getMinimumBounds()).getMagnitude();
             _shadowCamera->setWorldMatrix(meshRotation * mx::Matrix44::createTranslation(-sphereCenter));
             _shadowCamera->setProjectionMatrix(mx::Camera::createOrthographicMatrixZP(-r, r, -r, r, 0.0f, r * 2.0f));
             mx::ValuePtr value = dirLight->getInputValue("direction");
