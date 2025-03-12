@@ -60,7 +60,7 @@ namespace Hazel {
 			_ambientOcclusionGain(0.6f),
 			_genContext(mx::GlslShaderGenerator::create()),
 			_unitRegistry(mx::UnitConverterRegistry::create()),
-			_drawEnvironment(false),
+			_drawEnvironment(true),
 			_outlineSelection(false),
 			_renderTransparency(true),
 			_renderDoubleSided(true),

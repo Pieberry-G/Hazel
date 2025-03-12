@@ -83,7 +83,7 @@ namespace Hazel {
 
 
     MXMesh::MXMesh(const std::string& filePath) :
-        _materialFilename("resources/Materials/Examples/StandardSurface/standard_surface_carpaint.mtlx"),
+        _materialFilename("resources/Materials/Examples/StandardSurface/standard_surface_gold.mtlx"),
         _meshFilename(filePath),
         _meshScale(1.0f),
         _selectedGeom(0),
